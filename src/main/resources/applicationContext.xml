@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:task="http://www.springframework.org/schema/task" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+	
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+	
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+	
+	http://www.springframework.org/schema/task  
+    http://www.springframework.org/schema/task/spring-task-4.1.xsd 
+	">
+	
+	<!-- 处理请求时返回json字符串的中文乱码问题 -->
+	<mvc:annotation-driven>
+	</mvc:annotation-driven>
+	<!-- 返回对象，输出json格式 -->
+	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+	<!-- 返回对象，输出xml格式 -->
+	<!-- <bean id="xmlConverter" class="org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter"/> -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	        <property name="messageConverters">
+	          <list>
+	            <ref bean="jsonConverter"/>
+	            <!-- <ref bean="xmlConverter"/> -->
+	          </list>
+	    </property>
+	</bean>
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	  <!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">  
+        <property name="cacheSeconds" value="0" />  
+        <property name="messageConverters">  
+            <list>  
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>  
+            </list>  
+        </property>
+    </bean>  -->
+    
+    <!-- 配置前后缀 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix=".jsp" />
+    
+    <!-- 扫描-->
+    <context:component-scan base-package="com" />
+    
+    <!-- 连接数据库 -->
+    <bean id="ds" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
+      <property name="driver" value="com.mysql.jdbc.Driver"/>
+      <property name="url" value="jdbc:mysql://localhost:3306/coolq?characterEncoding=utf8"/>
+      <property name="username" value="coolq"/>
+      <property name="password" value="coolq"/>
+      <!-- 在任意时间存在的空闲连接数 -->
+      <property name="poolMaximumIdleConnections"  value="5"/>
+      <!--在被强制返回之前，池中连接被检出（checked out）时间 -->
+      <property name="poolMaximumCheckoutTime"  value="20000"/>
+      <!-- 最大活动连接数 -->
+      <property name="poolMaximumActiveConnections"  value="200"/>
+      <!-- 这是一个底层设置，如果获取连接花费的相当长的时间，它会给连接池打印状态日志并重新尝试获取一个连接（避免在误配置的情况下一直安静的失败），默认值：20000 毫秒（即 20 秒） -->
+      <property name="poolTimeToWait"  value="10000"/>
+    </bean>
+ 
+    <!-- 配置SessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="dataSource" ref="ds"/>
+       <!-- 配置别名的包 -->
+       <property name="typeAliasesPackage" value="com.wjyup.coolq.entity"/> 
+       
+       <!-- 配置映射resource -->
+      <property name="mapperLocations" value="classpath:com/wjyup/coolq/mapper/*.xml" />
+      <property name="configLocation" value="classpath:mybatis-config.xml" />
+    </bean>
+    
+   <!-- 配置事务通知 -->
+   <bean id="transactionManage" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <property name="dataSource" ref="ds" />
+   </bean>
+   
+   <!-- dao包扫描 -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+     <property name="basePackage" value="com.dao"/>
+   </bean>
+
+	<!--spring 工具类-->
+    <bean id="springContextUtil" class="com.wjyup.coolq.util.SpringApplicationContextHolder"/>
+	
+	<bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<!-- 核心线程数，默认为1 -->
+		<property name="corePoolSize" value="10" />
+		<!-- 最大线程数，默认为Integer.MAX_VALUE -->
+		<property name="maxPoolSize" value="100" />
+		<!-- 队列最大长度，一般需要设置值>=notifyScheduledMainExecutor.maxNum；默认为Integer.MAX_VALUE
+		    <property name="queueCapacity" value="1000" /> -->
+		<!-- 线程池维护线程所允许的空闲时间，默认为60s -->
+		<property name="keepAliveSeconds" value="60" />
+		<!-- 线程池对拒绝任务（无线程可用）的处理策略，目前只支持AbortPolicy、CallerRunsPolicy；默认为后者 -->
+		<property name="rejectedExecutionHandler">
+		    <!-- AbortPolicy:直接抛出java.util.concurrent.RejectedExecutionException异常 -->
+		    <!-- CallerRunsPolicy:主线程直接执行该任务，执行完之后尝试添加下一个任务到线程池中，可以有效降低向线程池内添加任务的速度 -->
+		    <!-- DiscardOldestPolicy:抛弃旧的任务、暂不支持；会导致被丢弃的任务无法再次被执行 -->
+		    <!-- DiscardPolicy:抛弃当前任务、暂不支持；会导致被丢弃的任务无法再次被执行 -->
+		    <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+    </bean>
+	
+</beans>
