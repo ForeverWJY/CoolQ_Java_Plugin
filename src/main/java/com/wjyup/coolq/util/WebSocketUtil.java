@@ -26,11 +26,6 @@ public class WebSocketUtil {
 	private static OutputStream out = null;
 	private static InputStream in = null;
 
-	static{
-		//websocket握手，以后直接使用此输入输出流发送接收数据
-		initWS();
-	}
-	
 	/**
 	 * 初始化ws
 	 */
@@ -69,6 +64,7 @@ public class WebSocketUtil {
 	 */
 	public static String sendSocketData(String message){
 		try {
+            initWS();
 			byte[] sendByte = encode(message.getBytes("UTF-8"));
 			log.info("sendMsg:"+new String(sendByte));
 			// 发送编码后的数据
@@ -95,6 +91,7 @@ public class WebSocketUtil {
 				count++;
 				Thread.sleep(200);
 			} while (len == 0);
+            closeWS();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
