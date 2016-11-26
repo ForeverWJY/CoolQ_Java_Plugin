@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.wjyup.coolq.entity.RequestData;
-import com.wjyup.coolq.util.CQSDK;
 import com.wjyup.coolq.util.MessageHandle;
 import com.wjyup.coolq.util.service.IMenuService;
 
 /**
- * 首页、菜单页
+ * 消息接收Controller
  * 
  * @author WJY
  *
@@ -79,27 +78,6 @@ public class IndexController {
 		 * log.info("返回的消息："+data.toArrayJson()); //返回信息 return
 		 * data.toArrayJson();
 		 */
-	}
-
-	@RequestMapping(value = "/test")
-	public void sendMsg(HttpServletRequest request) {
-		/*
-		 * String result = CQSDK.sendPrivateMsg("1066231345",
-		 * CQSDK.sendEmoji("128142")+"你好！");
-		 * System.out.println("result:"+result); String nickName =
-		 * CQSDK.getLoginNick(); System.out.println("nickName:"+nickName);
-		 */
-		String cookie = CQSDK.getCookies();
-		System.out.println("cookie:" + cookie);
-	}
-	
-	@RequestMapping(value = "/test1")
-	public void sendMsg1(HttpServletRequest request) {
-		 String result = CQSDK.sendPrivateMsg("1066231345",CQSDK.sendEmoji("128142")+"你好！");
-		 System.out.println("result:"+result); 
-		 String nickName = CQSDK.getLoginNick(); System.out.println("nickName:"+nickName);
-		 System.out.println("登录昵称："+nickName);
-		 
 	}
 
 }

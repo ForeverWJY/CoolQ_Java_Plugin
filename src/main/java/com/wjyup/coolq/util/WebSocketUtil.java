@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -42,7 +43,7 @@ public class WebSocketUtil {
 			header.append("Connection: Upgrade\r\n");
 			header.append("Upgrade: websocket\r\n");
 			header.append("Sec-WebSocket-Version: 13\r\n");
-			header.append("Sec-WebSocket-Key: d359Fdo6omyqfxyYF7Yacw==\r\n");
+			header.append("Sec-WebSocket-Key: "+getRandomSec()+"\r\n");
 			header.append("\r\n");
 			out.write(header.toString().getBytes());
 			out.flush();
@@ -50,11 +51,26 @@ public class WebSocketUtil {
 			// 读取握手数据
 			byte[] rawbuffer = new byte[RCVBUF];
 			in.read(rawbuffer);
-			String rb = new String(rawbuffer);
-			log.info("握手数据:" + rb);
+//			String rb = new String(rawbuffer);
+//			log.info("握手数据:" + rb);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+	
+	//产生随机Sec-WebSocket-Key
+	private static String getRandomSec(){
+		String str = "";
+		String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		char[] key = characters.toCharArray();
+		StringBuffer strs = new StringBuffer();
+		Random rd = new Random();
+		for(int a=0; a<10; a++){
+			int index = rd.nextInt(characters.length());
+			strs.append(key[index]);
+		}
+		str = Base64.getEncoder().encodeToString(strs.toString().getBytes());
+		return str;
 	}
 	
 	/**
@@ -65,8 +81,8 @@ public class WebSocketUtil {
 	public static String sendSocketData(String message){
 		try {
             initWS();
+            log.info("发送消息："+message);
 			byte[] sendByte = encode(message.getBytes("UTF-8"));
-			log.info("sendMsg:"+new String(sendByte));
 			// 发送编码后的数据
 			out.write(sendByte);
 			out.flush();
