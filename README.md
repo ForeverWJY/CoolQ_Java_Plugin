@@ -3,7 +3,7 @@
 ## 感谢HSTB大神的支持，使得Java实现websocket方式推送消息，接收使用POST JSON方式，[插件的开发文档地址](https://d.1sls.cn/CtPePro)
 ## 需先启用PHP对接插件，然后设置如下：
 
-### Websocket设置：
+### Websocket设置(1.4.2版本已改为Socket+HTTP方式)：
 1. 接口地址：`127.0.0.1:8080/coolq/coolq`
 2. 请求方式：`POST`，数据格式：`JSON`
 3. 勾选：开启双向交互模式&监听端口：`1970`
@@ -18,3 +18,6 @@
 5. 根据设置在`data.properties`文件中设置对应项
 
 ## 欢迎加入QQ讨论群：553601318
+
+## 链接
+[CtPe插件地址](https://github.com/Hstb1230/CtPe)
