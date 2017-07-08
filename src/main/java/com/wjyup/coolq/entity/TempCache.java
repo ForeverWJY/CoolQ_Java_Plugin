@@ -1,11 +1,12 @@
 package com.wjyup.coolq.entity;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * 缓存实体类
- * 
+ *
  * @author WJY
  */
 public class TempCache implements Serializable {
@@ -49,6 +50,34 @@ public class TempCache implements Serializable {
 
 	public void setObject(Object object) {
 		this.object = object;
+	}
+
+	/**
+	 * 是否超过过期时间
+	 * @return过期：false  没过期：true
+	 */
+	public boolean isOverDeadLineTime(){
+		long deadTime = deadLineTime.getTime();
+		long nowTime = System.currentTimeMillis();
+		return nowTime > deadTime;
+	}
+
+	/**
+	 * 数据缓存一天
+	 * 过程：取缓存日期的是今年的第多少天，先比较年份，再比较开始日期和现在日期的大小
+	 * @return 过期：false  没过期：true
+	 */
+	public boolean isExpired(){
+		if(getCacheTime() == null) return true;
+		Calendar start = Calendar.getInstance();
+		start.setTime(getCacheTime());
+		Calendar now = Calendar.getInstance();
+		if(now.get(Calendar.YEAR) > start.get(Calendar.YEAR)){
+			return true;
+		}else if(now.get(Calendar.DAY_OF_YEAR) > start.get(Calendar.DAY_OF_YEAR)){
+			return true;
+		}
+		return false;
 	}
 
 }

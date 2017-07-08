@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -80,34 +82,67 @@ public class WebSocketUtil {
 	 */
 	public static String sendSocketData(String message){
 		try {
-            initWS();
-            log.info("发送消息："+message);
-			byte[] sendByte = encode(message.getBytes("UTF-8"));
-			// 发送编码后的数据
-			out.write(sendByte);
-			out.flush();
+			//判断发送消息方式
+			if("1".equals(ConfigCache.WS_SEND_TYPE)){//websocket
+				initWS();
+				log.info("发送消息："+message);
+				byte[] sendByte = encode(message.getBytes("UTF-8"));
+				// 发送编码后的数据
+				out.write(sendByte);
+				out.flush();
 
-			// 获取返回值
-			int len = 0;
-			// 迭代次数
-			int count = 0;
-			do {
-				//防止超时
-				if (count > 50) {
-					break;
+				// 获取返回值
+				int len = 0;
+				// 迭代次数
+				int count = 0;
+				do {
+					//防止超时
+					if (count > 50) {
+						break;
+					}
+					len = in.available();
+					if(len > 5){
+						byte[] rawbuffer = new byte[len];
+						in.read(rawbuffer);
+						String result= new String(rawbuffer,"UTF-8");
+						log.info("返回结果:" + result);
+						return result;
+					}
+					count++;
+					Thread.sleep(200);
+				} while (len == 0);
+				closeWS();
+			}else if("2".equals(ConfigCache.WS_SEND_TYPE)){//socket
+				StringBuffer sb = new StringBuffer();
+				String url = "http://"+ConfigCache.HTTP_HOST+":"+ConfigCache.HTTP_PORT;
+				if(ConfigCache.USE_TOKEN){
+					long time = System.currentTimeMillis() / 1000;
+					String str = ConfigCache.WS_KEY + time + ConfigCache.WS_SECRET;
+					//MD5加密
+					String hash = Hashing.md5().newHasher().putString(str, Charsets.UTF_8).hash().toString();
+					url = url +"/" + time + "/" + hash;
 				}
-				len = in.available();
-				if(len > 5){
-					byte[] rawbuffer = new byte[len];
-					in.read(rawbuffer);
-					String result= new String(rawbuffer,"UTF-8");
-					log.info("返回结果:" + result);
-					return result;
+				Map<String,Object> map = (Map<String, Object>) JSON.parse(message);
+				Set<Map.Entry<String,Object>> set = map.entrySet();
+				sb.append(url+"/"+map.get("Fun")+"?");
+				for(Map.Entry<String,Object> o : set){
+					//get方式使用拼接
+					String temp = URLEncoder.encode(o.getValue().toString(),"utf-8");
+					sb.append(o.getKey()+"="+ temp +"&");
 				}
-				count++;
-				Thread.sleep(200);
-			} while (len == 0);
-            closeWS();
+				try{
+					log.info(sb.toString());
+					Document doc = Jsoup.connect(sb.toString()).timeout(5000).get();
+					if(doc.hasText()){
+						log.info("返回："+doc.text());
+						return doc.text();
+					}
+				}catch (Exception e){
+					log.error(e.getMessage(), e);
+				}
+
+
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

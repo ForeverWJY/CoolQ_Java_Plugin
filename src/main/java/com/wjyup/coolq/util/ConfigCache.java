@@ -12,6 +12,16 @@ public class ConfigCache {
 
 	public static String WSHost;// websocket的host
 	public static String WSPort;// websocket的port
+	/**
+	 * 选择推送消息的方式：1=websocket 2=socket
+	 */
+	public static String WS_SEND_TYPE;
+	public static Boolean USE_TOKEN;//使用TOKEN
+	public static String WS_KEY;//key
+	public static String WS_SECRET;//secret
+	public static Integer SOCKET_PORT;//Socket 的端口
+	public static String HTTP_HOST;// http的host
+	public static String HTTP_PORT;// http的port
 	public static String PHP_WS_URL;//php接口的url
 	public static String COOLQ_IMAGE_PATH;//CoolQ 图片文件夹
 	public static List<Long> MANAGER_QQ;//管理员QQ，使用逗号分隔

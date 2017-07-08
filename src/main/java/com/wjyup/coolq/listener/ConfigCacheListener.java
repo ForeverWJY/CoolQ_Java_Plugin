@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 
+import com.wjyup.coolq.util.TCPServer;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.ContextLoaderListener;
 
@@ -27,6 +28,18 @@ public class ConfigCacheListener extends ContextLoaderListener {
 			ConfigCache.WSHost = p.getProperty("ws.host");
 			ConfigCache.WSPort = p.getProperty("ws.port");
 			ConfigCache.PHP_WS_URL = p.getProperty("php.ws.url");
+			String useToken = p.getProperty("ws.use_token");
+			if("1".equals(useToken)){
+				ConfigCache.USE_TOKEN = true;
+			}else{
+				ConfigCache.USE_TOKEN = false;
+			}
+			ConfigCache.HTTP_HOST = p.getProperty("http.host");
+			ConfigCache.HTTP_PORT= p.getProperty("http.port");
+
+			ConfigCache.WS_KEY = p.getProperty("ws.key");
+			ConfigCache.WS_SECRET = p.getProperty("ws.secret");
+			ConfigCache.SOCKET_PORT = Integer.valueOf(p.getProperty("ws.socket.port"));
 			//CoolQ 图片文件夹
 			ConfigCache.COOLQ_IMAGE_PATH = p.getProperty("coolq.image.path");
 			//管理员QQ，使用逗号分隔
@@ -36,8 +49,23 @@ public class ConfigCacheListener extends ContextLoaderListener {
 			for(String key : manages){
 				ConfigCache.MANAGER_QQ.add(Long.parseLong(key));
 			}
+			//消息推送模式
+			ConfigCache.WS_SEND_TYPE = p.getProperty("ws.send.type");
+			if("2".equals(ConfigCache.WS_SEND_TYPE)){
+				//启动tcp server
+				startSocket();
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
+		log.info("配置加载完毕！");
+	}
+
+	/**
+	 * 启动Socket服务
+	 */
+	public void startSocket(){
+		Thread t = new Thread(new TCPServer());
+		t.start();
 	}
 }

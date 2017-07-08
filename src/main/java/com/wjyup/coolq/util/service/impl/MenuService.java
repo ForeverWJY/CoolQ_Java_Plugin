@@ -3,9 +3,11 @@ package com.wjyup.coolq.util.service.impl;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,12 +36,12 @@ public class MenuService extends BaseService implements IMenuService {
 		try {
 			String key = data.getMsg();
 			//查询天气
-			if("天气".equals(key.substring(0, 2))){
+			if(key.length() >= 2 && "天气".equals(key.substring(0, 2))){
 				String cityName = key.substring(3, key.length());
 				return getWeatherByName(cityName);
 			}
 			//oschina资讯
-			if("oschina".equals(key)){
+			if(key.length() == 7 && "oschina".equals(key)){
 				List<String> list = getOschinaNews();
 				if(list != null && list.size() > 0){
 					reply(data, list.get(0));
@@ -47,7 +49,7 @@ public class MenuService extends BaseService implements IMenuService {
 				}
 			}
 			//我的群列表
-			if("查看群列表".equals(key)){
+			if(key.length() >= 5 && "查看群列表".equals(key)){
 				if(ConfigCache.isManger(data.getQQ())){
 					List<GroupListVO> list = CQSDK.getGroupList();
 					StringBuffer msg = new StringBuffer("共有"+list.size()+"个群\n");
@@ -60,7 +62,7 @@ public class MenuService extends BaseService implements IMenuService {
 				}
 			}
 			//我的好友列表
-			if("查看好友列表".equals(key)){
+			if(key.length() >= 6 && "查看好友列表".equals(key)){
 				if(ConfigCache.isManger(data.getQQ())){
 					List<FriendListVO> list = CQSDK.getFriendList();
 					StringBuffer msg = new StringBuffer("共有"+list.size()+"个好友\n");
@@ -72,7 +74,7 @@ public class MenuService extends BaseService implements IMenuService {
 				}
 			}
 			//查看指定群的成员列表
-			if(key.indexOf("group:") == 0){
+			if(key.length() >= 5 && key.indexOf("group:") == 0){
 				if(ConfigCache.isManger(data.getQQ())){
 					String group = key.trim().replace("group:", "");
 					List<GroupMemberListVO> list = CQSDK.getGroupMemberList2(group);
@@ -164,7 +166,9 @@ public class MenuService extends BaseService implements IMenuService {
 	
 	/**
 	 * 读取oschina的数据，写入到缓存中
+	 * 已标记为废弃
 	 */
+	@Deprecated
 	private void writeOschinaCache(){
 		try {
 			String text = WebUtil.getUrlResult("http://www.oschina.net/", "get");
@@ -205,22 +209,86 @@ public class MenuService extends BaseService implements IMenuService {
 		}
 	}
 
+	/**
+	 * 读取oschina的数据，写入到缓存中
+	 */
+	private void writeOschinaCacheByAPI(){
+		try {
+			//获取资讯消息
+			String url = "https://www.oschina.net/action/apiv2/sub_list?token=d6112fa662bc4bf21084670a857fbd20";
+			String userAgent = "OSChina.NET/1.0 (oscapp; 283; Android 6.0.1; X800+ Build/BEXCNFN5902012221S; 2ec82093-4c87-4be3-9cb1-bcd735aef591)";
+			Connection.Response response = Jsoup.connect(url).userAgent(userAgent)
+					.header("AppToken", "799293cae64a1ef4c36a83d362f3f80cb9007505")
+					.method(Connection.Method.GET)
+					.ignoreContentType(true)
+					.execute();
+			if(response.statusCode() == 200){
+				if(log.isDebugEnabled()){
+					log.info("oschina api 数据："+response.body());
+				}
+				JSONObject root = JSON.parseObject(response.body());
+				StringBuffer news = new StringBuffer("OSChina资讯：");
+				StringBuffer softs = new StringBuffer("OSChina资讯：");
+				if(root.containsKey("code") && root.getIntValue("code") == 1){//success
+					JSONObject result = root.getJSONObject("result");
+					if(result.containsKey("items") && result.getJSONArray("items").size() > 0){
+						JSONArray items = result.getJSONArray("items");
+						Iterator<Object> it = items.iterator();
+						int i = 1;
+						while(it.hasNext()){
+							String txt = it.next().toString();
+							JSONObject obj = JSONObject.parseObject(txt);
+							if(i <= 10){
+								if(obj.containsKey("title") && StringUtils.isNotBlank(obj.getString("title"))){
+									news.append("\n"+i+"."+obj.getString("title")+"\n");
+								}
+								if(obj.containsKey("href") && StringUtils.isNotBlank(obj.getString("href"))){
+									news.append("->链接："+obj.getString("href")+"\n");
+								}
+							}else{
+								if(obj.containsKey("title") && StringUtils.isNotBlank(obj.getString("title"))){
+									softs.append("\n"+i+"."+obj.getString("title")+"\n");
+								}
+								if(obj.containsKey("href") && StringUtils.isNotBlank(obj.getString("href"))){
+									softs.append("->链接："+obj.getString("href")+"\n");
+								}
+							}
+							i++;
+						}
+					}
+					//写入缓存
+					Date cacheTime = new Date();
+					long deadLineTime = cacheTime.getTime() + (1*60*60*1000);
+					TempCache temp1 = new TempCache(new Date(), new Date(deadLineTime), news.toString().substring(0, news.length() - 1));
+					TempCache temp2 = new TempCache(new Date(), new Date(deadLineTime), softs.toString().substring(0, softs.length() - 1));
+					ConfigCache.mapCache.put("oschina_news", temp1);
+					ConfigCache.mapCache.put("oschina_soft", temp2);
+				}
+			}else{
+				log.error("oschina api 信息获取状态码："+response.statusCode());
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
 	@Override
 	public List<String> getOschinaNews() {
 		if(ConfigCache.mapCache.get("oschina_news") == null ||
 				ConfigCache.mapCache.get("oschina_soft") == null){
-			writeOschinaCache();
+			writeOschinaCacheByAPI();
 		}
 		List<String> list = null;
 		//读取缓存
 		TempCache t1 = (TempCache) ConfigCache.mapCache.get("oschina_news");
 		TempCache t2 = (TempCache) ConfigCache.mapCache.get("oschina_soft");
 		if(t1 != null && t2 != null){
-			Date nowDate = new Date();
 			//如果缓存过期了，重新加载
-			if(nowDate.getTime() > t1.getDeadLineTime().getTime()){
-				writeOschinaCache();
+			if(t1.isOverDeadLineTime()){
+				writeOschinaCacheByAPI();
 			}
+			t1 = (TempCache) ConfigCache.mapCache.get("oschina_news");
+			t2 = (TempCache) ConfigCache.mapCache.get("oschina_soft");
 			list = new ArrayList<>(2);
 			list.add(t1.getObject().toString());
 			list.add(t2.getObject().toString());

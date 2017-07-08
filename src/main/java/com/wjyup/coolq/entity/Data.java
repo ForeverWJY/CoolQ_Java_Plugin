@@ -1,12 +1,16 @@
 package com.wjyup.coolq.entity;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.wjyup.coolq.util.ConfigCache;
+import org.apache.commons.codec.binary.Base64;
+
 /**
  * 消息实体类
  * @author WJY
@@ -47,7 +51,7 @@ public class Data implements Serializable {
 	public Data(Long qQ, String msg, String fun) {
 		super();
 		QQ = qQ;
-		Msg = msg;
+		setMsg(msg);
 		Fun = fun;
 	}
 	
@@ -117,7 +121,16 @@ public class Data implements Serializable {
 	}
 
 	public void setMsg(String msg) {
-		Msg = msg;
+		//HTTP GET需要base64一下
+		if("2".equals(ConfigCache.WS_SEND_TYPE)){
+			try {
+				Msg = new String(Base64.encodeBase64(msg.getBytes("UTF-8")));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else{
+			Msg = msg;
+		}
 	}
 
 	public String getFun() {
