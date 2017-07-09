@@ -127,6 +127,18 @@ public class WebSocketUtil {
 				sb.append(url+"/"+map.get("Fun")+"?");
 				for(Map.Entry<String,Object> o : set){
 					//get方式使用拼接
+					/*if("Msg".equals(o.getKey())){
+						try {
+							String temp = Base64.getEncoder().encodeToString(o.getValue().toString().getBytes());
+							sb.append(o.getKey()+"="+ temp +"&");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}else{
+						String temp = URLEncoder.encode(o.getValue().toString(),"utf-8");
+						sb.append(o.getKey()+"="+ temp +"&");
+					}*/
+					log.info("编码前"+o.getKey()+"："+o.getValue());
 					String temp = URLEncoder.encode(o.getValue().toString(),"utf-8");
 					sb.append(o.getKey()+"="+ temp +"&");
 				}

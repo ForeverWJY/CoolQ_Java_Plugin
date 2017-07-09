@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -290,7 +291,9 @@ public class CQSDK {
 				String[] res = result.split(";");
 				for(String str : res){
 					String[] temp = str.split("=");
-					map.put(temp[0], temp[1]);
+					if(temp.length == 2){
+						map.put(temp[0], temp[1]);
+					}
 				}
 				return map;
 			}
@@ -608,8 +611,10 @@ public class CQSDK {
 	 * url ： http://qun.qq.com/cgi-bin/qun_mgr/get_group_list
 	 * method : post
 	 * parameters : bkn
+	 * getGroupList 方法
 	 */
-	public static List<GroupListVO> getGroupList(){
+	@Deprecated
+	public static List<GroupListVO> getGroupList_old(){
 		try {
 			List<GroupListVO> list = new ArrayList<>();
 			Map<String, String> data = new HashMap<>();
@@ -639,7 +644,8 @@ public class CQSDK {
 	 * method : post
 	 * parameters : bkn
 	 */
-	public static List<FriendListVO> getFriendList(){
+	@Deprecated
+	public static List<FriendListVO> getFriendList_old(){
 		try {
 			List<FriendListVO> voList = new ArrayList<>();
 			Map<String, String> data = new HashMap<>();
@@ -681,6 +687,7 @@ public class CQSDK {
 	 *   sort=> 0
 	 *   bkn => csrtoken
 	 */
+	@Deprecated
 	public static List<GroupMemberInfoVO> getGroupMemberList1(String group){
 		try {
 			List<GroupMemberInfoVO> voList = new ArrayList<>(0);
@@ -738,6 +745,7 @@ public class CQSDK {
 	 *  random = 随机数
 	 *  g_tk = csrtoken
 	 */
+	@Deprecated
 	public static List<GroupMemberListVO> getGroupMemberList2(String group){
 		try {
 			List<GroupMemberListVO> voList = new ArrayList<>();
@@ -761,8 +769,77 @@ public class CQSDK {
 		}
 		return null;
 	}
-	
-	
+
+	/**
+	 * 获取群成员列表
+	 * @param groupQQ 群QQ
+	 */
+	public static String getGroupMemberList(String groupQQ){
+		if(StringUtils.isNotBlank(groupQQ)){
+			Data data = new Data();
+			data.setFun("getGroupMemberList");
+			data.setGroup(Long.valueOf(groupQQ));
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 获取群列表
+	 */
+	public static List<GroupListVO> getGroupList(){
+		List<GroupListVO> list = new ArrayList<>();
+		Data data = new Data();
+		data.setFun("getGroupList");
+		String result = WebSocketUtil.sendSocketData(data.toJson());
+		if(StringUtils.isNotBlank(result)){
+			JSONObject obj = JSON.parseObject(result);
+			if(obj.getInteger("Status") == 0 && obj.containsKey("data")){
+				JSONArray jarr = obj.getJSONArray("data");
+				GroupListVO listVO = null;
+				for(int a=0; a<jarr.size(); a++){
+					JSONObject o1 = jarr.getJSONObject(a);
+					listVO = new GroupListVO(o1.getLong("Group"), o1.getString("Name"), null);
+					list.add(listVO);
+				}
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * 获好友列表
+	 */
+	public static List<FriendListVO> getFriendList(){
+		List<FriendListVO> list = new ArrayList<>();
+		Data data = new Data();
+		data.setFun("getFriendList");
+		String result = WebSocketUtil.sendSocketData(data.toJson());
+		System.out.println(result);
+		if(StringUtils.isNotBlank(result)){
+			JSONObject obj = JSONObject.parseObject(result);
+			if(obj.getInteger("Status") == 0 && obj.containsKey("Result")){
+				JSONObject jobj = obj.getJSONObject("Result");
+				Iterator<String> iter = jobj.keySet().iterator();
+				while(iter.hasNext()){
+					String key = iter.next();
+					JSONObject jsonObject = jobj.getJSONObject(key);
+					jsonObject.getString("gname");//分组名称
+					JSONArray jarr = jsonObject.getJSONArray("mems");//分组下的成员列表
+					if(jarr != null && jarr.size() > 0){
+						for(int i=0; i<jarr.size(); i++){
+							JSONObject obj1  = jarr.getJSONObject(i);
+							list.add(new FriendListVO(obj1.getString("name"), obj1.getLong("uin")));
+						}
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+
 	/**
 	 * 获取图片信息
 	 */

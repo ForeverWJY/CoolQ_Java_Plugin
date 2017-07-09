@@ -56,7 +56,7 @@ public class MenuService extends BaseService implements IMenuService {
 					for(GroupListVO vo : list){
 						msg.append("\n=>群号:"+vo.getGroup()+"\n");
 						msg.append("=>群昵称:"+vo.getGroupNickName()+"\n");
-						msg.append("=>群创建者QQ:"+vo.getGroupOwner()+"\n");
+//						msg.append("=>群创建者QQ:"+vo.getGroupOwner()+"\n");
 					}
 					reply(data, msg.substring(0, msg.length() - 1));
 				}
