@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
@@ -16,6 +20,16 @@ public class WebUtil {
 	
 	//天气缓存
 	public static Map<String, WeatherInfo> weatherInfo = new HashMap<>();
+
+	//okhttp mediatype
+	public static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+	private static ThreadLocal<OkHttpClient> okHttpClientThreadLocal = new ThreadLocal<OkHttpClient>(){
+		@Override
+		public OkHttpClient get() {
+			return new OkHttpClient();
+		}
+	};
+
 	
 	/**
 	 * 根据URL和请求类型获取请求结果，用于跨域请求
@@ -62,5 +76,26 @@ public class WebUtil {
 			log.error(WebUtil.class,e);
 		}
 		return resp.body();
+	}
+
+	/**
+	 * okhttpclient 提交POST数据
+	 * @param url 链接
+	 * @param json  JSON数据
+	 * @return
+	 * @throws IOException
+	 */
+	public static String post(String url, String json) throws IOException {
+		RequestBody body = RequestBody.create(mediaType, json);
+		Request request = new Request.Builder()
+				.url(url)
+				.post(body)
+				.build();
+		okhttp3.Response response = okHttpClientThreadLocal.get().newCall(request).execute();
+		if (response.isSuccessful()) {
+			return response.body().string();
+		} else {
+			throw new IOException("Unexpected code " + response);
+		}
 	}
 }

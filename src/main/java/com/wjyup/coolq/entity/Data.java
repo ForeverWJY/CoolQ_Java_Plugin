@@ -122,7 +122,7 @@ public class Data implements Serializable {
 
 	public void setMsg(String msg) {
 		//HTTP GET需要base64一下
-		if("2".equals(ConfigCache.WS_SEND_TYPE)){
+		/*if("2".equals(ConfigCache.WS_SEND_TYPE)){
 			try {
 				Msg = new String(Base64.encodeBase64(msg.getBytes("UTF-8")));
 				//Msg = java.util.Base64.getEncoder().encodeToString(msg.getBytes("UTF-8"));
@@ -131,8 +131,8 @@ public class Data implements Serializable {
 			}
 		}else{
 			Msg = msg;
-		}
-		//Msg = msg;
+		}*/
+		Msg = msg;
 	}
 
 	public String getFun() {

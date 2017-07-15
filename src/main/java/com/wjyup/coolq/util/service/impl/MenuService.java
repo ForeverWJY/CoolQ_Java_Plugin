@@ -1,5 +1,6 @@
 package com.wjyup.coolq.util.service.impl;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,6 +93,19 @@ public class MenuService extends BaseService implements IMenuService {
 					reply(data, msg.substring(0, msg.length() - 1));
 				}
 			}
+			//VIP视频播放
+			if(key.startsWith("播放")){
+				//拆分
+				String[] ss = key.split(" ");
+				if(ss.length == 2 && StringUtils.isNotBlank(ss[1])
+						&& ss[1].indexOf("http") == 0
+						&& ss[1].contains("[CQ") == false){
+					String result = vipShortUrl(ss[1]);
+					if(result != null){
+						reply(data,result);
+					}
+				}
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -118,6 +132,27 @@ public class MenuService extends BaseService implements IMenuService {
 			CQSDK.sendDiscussMsg(data.getGroup().toString(), message);
 			break;
 		}
+	}
+
+	/**
+	 * 用于返回VIP视频短网址
+	 * @param url
+	 * @return
+	 */
+	private String vipShortUrl(String url){
+		String result = null;
+		if(StringUtils.isNotBlank(url)){
+			try {
+				Document doc = Jsoup.connect("https://zanlide.com/su/add?url="+url).timeout(5000).get();
+				if(doc.hasText()){
+					result = "免费观看地址：https://zanlide.com/su/u?h="+doc.text();
+				}
+			} catch (IOException e) {
+				log.error("添加短网址失败！网址："+url);
+				log.error(e.getMessage(),e);
+			}
+		}
+		return result;
 	}
 
 	@Override

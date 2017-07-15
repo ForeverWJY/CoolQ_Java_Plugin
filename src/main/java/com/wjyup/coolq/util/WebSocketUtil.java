@@ -11,7 +11,9 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
+import okhttp3.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,6 +30,7 @@ public class WebSocketUtil {
 	private static Socket socket = null;
 	private static OutputStream out = null;
 	private static InputStream in = null;
+
 
 	/**
 	 * 初始化ws
@@ -122,10 +125,22 @@ public class WebSocketUtil {
 					String hash = Hashing.md5().newHasher().putString(str, Charsets.UTF_8).hash().toString();
 					url = url +"/" + time + "/" + hash;
 				}
-				Map<String,Object> map = (Map<String, Object>) JSON.parse(message);
-				Set<Map.Entry<String,Object>> set = map.entrySet();
-				sb.append(url+"/"+map.get("Fun")+"?");
-				for(Map.Entry<String,Object> o : set){
+//				Map<String,Object> map = (Map<String, Object>) JSON.parse(message);
+//				String msg = null;
+//				//获取msg并转码
+//				if(map.isEmpty() == false && map.containsKey("Msg")
+//						&& StringUtils.isNotBlank(map.get("Msg").toString())){
+//					String str = StringEscapeUtils.escapeJava(map.get("Msg").toString());
+//					map.put("Msg",str);
+//					msg = JSON.toJSONString(map);
+//				}else{
+//					msg = message;
+//				}
+				//获取方法名并拼接URL
+//				sb.append(url+"/"+map.get("Fun"));
+//				Set<Map.Entry<String,Object>> set = map.entrySet();
+//				sb.append(url+"/"+map.get("Fun")+"?");
+//				for(Map.Entry<String,Object> o : set){
 					//get方式使用拼接
 					/*if("Msg".equals(o.getKey())){
 						try {
@@ -138,11 +153,11 @@ public class WebSocketUtil {
 						String temp = URLEncoder.encode(o.getValue().toString(),"utf-8");
 						sb.append(o.getKey()+"="+ temp +"&");
 					}*/
-					log.info("编码前"+o.getKey()+"："+o.getValue());
-					String temp = URLEncoder.encode(o.getValue().toString(),"utf-8");
-					sb.append(o.getKey()+"="+ temp +"&");
-				}
-				try{
+//					log.info("编码前"+o.getKey()+"："+o.getValue());
+//					String temp = URLEncoder.encode(o.getValue().toString(),"utf-8");
+//					sb.append(o.getKey()+"="+ temp +"&");
+//				}
+				/*try{
 					log.info(sb.toString());
 					Document doc = Jsoup.connect(sb.toString()).timeout(5000).get();
 					if(doc.hasText()){
@@ -151,8 +166,15 @@ public class WebSocketUtil {
 					}
 				}catch (Exception e){
 					log.error(e.getMessage(), e);
+				}*/
+				log.info("发送的json文本："+message);
+				try{
+					String result = WebUtil.post(url, message);
+					log.info("返回结果:" + result);
+					return result;
+				}catch (Exception e){
+					log.error(e.getMessage(),e);
 				}
-
 
 			}
 		} catch (Exception e) {
