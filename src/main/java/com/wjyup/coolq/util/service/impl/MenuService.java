@@ -145,7 +145,7 @@ public class MenuService extends BaseService implements IMenuService {
 			try {
 				Document doc = Jsoup.connect("https://zanlide.com/su/add?url="+url).timeout(5000).get();
 				if(doc.hasText()){
-					result = "免费观看地址：https://zanlide.com/su/u?h="+doc.text();
+					result = doc.text();
 				}
 			} catch (IOException e) {
 				log.error("添加短网址失败！网址："+url);
