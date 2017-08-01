@@ -26,6 +26,11 @@ public class ConfigCache {
 	public static String COOLQ_IMAGE_PATH;//CoolQ 图片文件夹
 	public static List<Long> MANAGER_QQ;//管理员QQ，使用逗号分隔
 
+	/**
+	 * 配置一个文件夹，存放所有处理消息的插件类，通过反射遍历并调用
+	 */
+	public static String PLUGIN_PACKAGE_PATH;
+
 	//根据关键字存放缓存，比如：oschina_news
 	public static HashMap<String, Object> mapCache = new HashMap<String, Object>(2);
 	/*

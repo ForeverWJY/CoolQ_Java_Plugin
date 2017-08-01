@@ -1,7 +1,7 @@
 package com.wjyup.coolq.util;
+
 import com.google.gson.Gson;
 import com.wjyup.coolq.entity.RequestData;
-import com.wjyup.coolq.util.service.IMenuService;
 import org.apache.log4j.Logger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -17,7 +17,6 @@ public class ServerThread implements Runnable{
     private Logger log = Logger.getLogger(getClass());
 
     private Socket socket = null;//和本线程相关的Socket
-    private IMenuService menuService = null;
 
     public ServerThread(Socket socket) {
         this.socket = socket;

@@ -91,6 +91,7 @@ public class CQSDK {
 
 	/**
 	 * 发送图片
+	 *  @param imgFile 图片路径，可使用网络图片和本地图片．使用本地图片时需在路径前加入 file://
 	 */
 	public static String sendImage(String imgFile) {
 		if (StringUtils.isNotBlank(imgFile)) {
@@ -100,14 +101,29 @@ public class CQSDK {
 	}
 
 	/**
+	 * 发送位置分享(location)
+	 * @param lat 纬度
+	 * @param lon 经度
+	 * @param zoom 放大倍数，可空，默认为 15
+	 * @param title 地点名称，建议12字以内
+	 * @param content 地址，建议20字以内
+	 * @return string CQ码_位置分享
+	 */
+	public static String sendLocation(double lat, double lon, int zoom, String title, String content){
+		String format = "[CQ:location,lat=%1$f,lon=%2$f,zoom=%3$d,title=%4$s,content=%5$s]";
+		return String.format(format,lat,lon,zoom,title,content);
+	}
+
+	/**
 	 * 发送音乐 音乐网站类型,目前支持 qq/QQ音乐 163/网易云音乐 xiami/虾米音乐，默认为qq
 	 */
-	public static String sendMusic(String songID, String type) {
+	public static String sendMusic(String songID, String type, boolean newStyle) {
 		if (StringUtils.isNotBlank(songID)) {
 			if (StringUtils.isBlank(type)) {
 				type = "qq";
 			}
-			return "[CQ:music,id=" + songID + ",type=" + type + "]";
+			int style = newStyle ? 1 : 0;
+			return "[CQ:music,id=" + songID + ",type=" + type + ",style="+ style +"]";
 		}
 		return null;
 	}
@@ -866,6 +882,127 @@ public class CQSDK {
 			log.error(e.getMessage(), e);
 		}                                       // 关闭文件
 		return cqImageInfo;
+	}
+
+	/**
+	 * 取群详细信息
+	 * @Auth 20
+	 * @param groupID 目标群
+	 * @return 群详细信息，执行失败时返回null
+	 */
+	public static String getGroupInfo(String groupID){
+		if(StringUtils.isNotBlank(groupID)){
+			Data data = new Data();
+			data.setFun("getGroupInfo");
+			data.setGroup(Long.parseLong(groupID));
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 取解禁剩余时间
+	 * @Auth 20
+	 * @param groupID 目标群
+	 * @return int 禁言剩余时间，单位：秒，0为未禁言，执行失败时返回null
+	 */
+	public static String getBanStatus(String groupID){
+		if(StringUtils.isNotBlank(groupID)){
+			Data data = new Data();
+			data.setFun("getBanStatus");
+			data.setGroup(Long.parseLong(groupID));
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 取指定群中被禁言用户列表
+	 * @Auth 20
+	 * @param groupID 目标群
+	 * @return 被禁言的用户信息，执行失败时返回null
+	 */
+	public static String getBanList(String groupID){
+		if(StringUtils.isNotBlank(groupID)){
+			Data data = new Data();
+			data.setFun("getBanList");
+			data.setGroup(Long.parseLong(groupID));
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 取头像链接
+	 * @Auth 20
+	 * @param qq 目标QQ
+	 * @param size 头像尺寸，默认 100
+	 * @return string 头像链接
+	 */
+	public static String getHeadimgLink(String qq, int size){
+		if(StringUtils.isNotBlank(qq) && size > 0){
+			Data data = new Data();
+			data.setFun("getHeadimgLink");
+			data.setSize(size);
+			data.setQQ(Long.parseLong(qq));
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 批量取QQ头像
+	 * @Auth 20
+	 * @param  qqList QQ列表，每个QQ用 _ 分开
+	 * @return QQ头像链接列表，执行失败时返回null
+	 */
+	public static String getMoreQQHeadimg(String qqList){
+		if(StringUtils.isNotBlank(qqList)){
+			Data data = new Data();
+			data.setFun("getMoreQQHeadimg");
+			data.setQQList(qqList);
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 批量取QQ昵称
+	 * @Auth 20
+	 * @param  qqList QQ列表，每个QQ用 _ 分开
+	 * @return QQ昵称列表，执行失败时返回null
+	 */
+	public static String getMoreQQName(String qqList){
+		if(StringUtils.isNotBlank(qqList)){
+			Data data = new Data();
+			data.setFun("getMoreQQName");
+			data.setQQList(qqList);
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * 批量取群头像
+	 * @Auth 20
+	 * @param groupList 群列表，每个群用 - 分开
+	 * @return 群头像链接列表，执行失败时返回null
+	 */
+	public static String getMoreGroupHeadimg(String groupList){
+		if(StringUtils.isNotBlank(groupList)){
+			Data data = new Data();
+			data.setFun("getMoreGroupHeadimg");
+			data.setGroupList(groupList);
+			String result = WebSocketUtil.sendSocketData(data.toJson());
+			return result;
+		}
+		return null;
 	}
 	
 	/**

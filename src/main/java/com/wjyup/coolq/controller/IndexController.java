@@ -1,21 +1,18 @@
 package com.wjyup.coolq.controller;
 
-import java.io.DataInputStream;
-import java.net.URLDecoder;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.gson.Gson;
+import com.wjyup.coolq.entity.RequestData;
+import com.wjyup.coolq.util.MessageHandle;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.wjyup.coolq.entity.RequestData;
-import com.wjyup.coolq.util.MessageHandle;
-import com.wjyup.coolq.util.service.IMenuService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.DataInputStream;
+import java.net.URLDecoder;
 
 /**
  * 消息接收Controller
@@ -31,8 +28,6 @@ public class IndexController {
 
 	@Resource
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
-	@Resource
-	private IMenuService menuService;
 
 	@RequestMapping(value = "index")
 	public void index() {

@@ -43,6 +43,9 @@ public class Data implements Serializable {
 	private String File;//语音文件名,不带路径
 	private String Format;//所需的语音文件格式，目前支持 mp3,amr,wma,m4a,spx,ogg,wav,flac
 	private Long Group;//群号码
+	private Integer Size;//头像大小
+	private String QQList;//QQ列表，每个QQ用 _ 分开
+	private String GroupList;//群列表，每个群用 - 分开
 
 	public Data() {
 	}
@@ -199,4 +202,27 @@ public class Data implements Serializable {
 		Group = group;
 	}
 
+	public Integer getSize() {
+		return Size;
+	}
+
+	public void setSize(Integer size) {
+		Size = size;
+	}
+
+	public String getQQList() {
+		return QQList;
+	}
+
+	public void setQQList(String QQList) {
+		this.QQList = QQList;
+	}
+
+	public String getGroupList() {
+		return GroupList;
+	}
+
+	public void setGroupList(String groupList) {
+		GroupList = groupList;
+	}
 }

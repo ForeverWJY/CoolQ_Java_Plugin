@@ -1,5 +1,8 @@
 # CoolQ_Java_Plugin
-## 项目使用Spring+Spring MVC+Mybatis架构，依赖于PHP对接插件（cc.1sls.CtPe.cpk）[论坛下载地址](https://cqp.cc/forum.php?mod=viewthread&tid=28532)
+## 架构
+1. 项目使用JDK8+Maven+Spring+Spring MVC+Mybatis，依赖PHP对接插件（cc.1sls.CtPe.cpk）做服务端，[插件论坛下载地址](https://cqp.cc/forum.php?mod=viewthread&tid=28532)
+2. 为了便于消息处理，消息处理类存放在`com.wjyup.coolq.util.service.impl`包下，可以在`data.properties`中设置路径，通过扫描该包下的所有类，并调用doit方法，进行消息处理，消息处理类需要继承抽象类`ResolveMessageService`
+
 ## 感谢HSTB大神的支持，使得Java实现websocket方式推送消息，接收使用POST JSON方式，[插件的开发文档地址](https://d.1sls.cn/CtPePro)
 ## 需先启用PHP对接插件，然后设置如下：
 

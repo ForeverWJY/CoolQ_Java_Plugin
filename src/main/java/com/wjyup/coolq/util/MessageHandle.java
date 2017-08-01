@@ -1,16 +1,19 @@
 package com.wjyup.coolq.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.wjyup.coolq.entity.RequestData;
-import com.wjyup.coolq.util.service.IMenuService;
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.Method;
+import java.util.Set;
+
 /**
  * 处理消息的线程
  * @author WJY
  */
 public class MessageHandle implements Runnable{
+    private Logger log = Logger.getLogger("MessageHandle");
 	
-	private IMenuService menuService = null;
+//	private IMenuService menuService = null;
 	
 	private RequestData data;
 	
@@ -21,7 +24,7 @@ public class MessageHandle implements Runnable{
 		super();
 		this.data = requestData;
 		//使用Spring工具类手动注入
-		menuService = (IMenuService) SpringApplicationContextHolder.getBean("menuService");
+//		menuService = (IMenuService) SpringApplicationContextHolder.getBean("menuService");
 	}
 
 	@Override
@@ -39,27 +42,23 @@ public class MessageHandle implements Runnable{
 			}else if(data.getSubType() == 3){//来自讨论组 私聊
 			    
 			}
-			message = menuService.listMenu(data);
-			if(StringUtils.isNotBlank(message)){
-				CQSDK.sendPrivateMsg(data.getQQ().toString(), message);
-			}
+//			message = menuService.listMenu(data);
+//			if(StringUtils.isNotBlank(message)){
+//				CQSDK.sendPrivateMsg(data.getQQ().toString(), message);
+//			}
+            resolveMsg();
 			break;
 		//群消息
 		case 2:
 			
 			if(data.getSubType() == 1){//普通消息
-				message = menuService.listMenu(data);
-				if(StringUtils.isNotBlank(message)){
-					CQSDK.sendGroupMsg(data.getGroup().toString(), message);
-				}
+
 			}else if(data.getSubType() == 2){//匿名消息
-				message = menuService.listMenu(data);
-				if(StringUtils.isNotBlank(message)){
-					CQSDK.sendGroupMsg(data.getGroup().toString(), message);
-				}
+
 			}else if(data.getSubType() == 3){//系统消息
-			    
+
 			}
+            resolveMsg();
 		    break;
 		//讨论组信息
 		case 4:
@@ -115,6 +114,35 @@ public class MessageHandle implements Runnable{
 			break;
 		}
 	}
+
+    /**
+     * 新增加通过反射处理消息的方法
+     */
+	private void resolveMsg(){
+        //遍历指定包下的所有类
+        Set<Class<?>> list = null;
+        try {
+            list = ScanPackage.getClasses(ConfigCache.PLUGIN_PACKAGE_PATH);
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+        if(list != null){
+            list.forEach(cls -> {
+                try {
+                    System.out.println(cls.getName());
+                    Class c = Class.forName(cls.getName());
+                    Object o = c.newInstance();
+                    Method method = c.getDeclaredMethod("doit", RequestData.class);
+                    method.invoke(o,data);
+                }catch (NoSuchMethodException e){
+                    log.error("没找到doit方法");
+                } catch (Exception e) {
+                    log.error(e.getMessage(),e);
+                }
+
+            });
+        }
+    }
 
 	public RequestData getRequestData() {
 		return data;

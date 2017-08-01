@@ -55,6 +55,8 @@ public class ConfigCacheListener extends ContextLoaderListener {
 				//启动tcp server
 				startSocket();
 			}
+			//配置一个文件夹，存放所有处理消息的插件类，通过反射遍历并调用
+			ConfigCache.PLUGIN_PACKAGE_PATH = p.getProperty("plugin.package.path");
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

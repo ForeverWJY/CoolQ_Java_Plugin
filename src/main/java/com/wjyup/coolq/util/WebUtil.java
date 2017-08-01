@@ -8,6 +8,16 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
@@ -20,6 +30,8 @@ public class WebUtil {
 	
 	//天气缓存
 	public static Map<String, WeatherInfo> weatherInfo = new HashMap<>();
+
+	public static final String[] DUER_RESULT_TYPE = {"txt","txt_card","txt_img","txt_comm","txt_card_filmpet","txt_sugg","txt_list","img_comm","gif_face","multi_news","txt_single_link","multi_normal","multi_movie"};
 
 	//okhttp mediatype
 	public static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
@@ -97,5 +109,58 @@ public class WebUtil {
 		} else {
 			throw new IOException("Unexpected code " + response);
 		}
+	}
+
+	/**
+	 * duer接口HTTPclient调用方式
+	 */
+	public static String getDuerMessage(String content) {
+		//返回结果
+		String result = null;
+		if(StringUtils.isEmpty(content)){
+			return result;
+		}
+		byte[] byte_content = null;
+		try {
+			byte_content = content.getBytes("UTF-8");
+		} catch (Exception e2) {
+			log.error("请求参数字符集编码异常：Charset=UTF-8");
+		}
+
+		//建立连接
+		String urlstr = "https://xiaodu.baidu.com/ws";
+		CloseableHttpClient client = HttpClientBuilder.create().build();
+		HttpPost post = new HttpPost(urlstr);
+		post.setConfig(RequestConfig.DEFAULT);
+		EntityBuilder enbu = EntityBuilder.create().setContentType(ContentType.APPLICATION_JSON).setContentEncoding("UTF-8").setBinary(byte_content);
+		HttpEntity rqEntity = enbu.build();
+		post.setEntity(rqEntity);
+
+		//执行请求
+		HttpResponse httprs = null;
+		try {
+			httprs = client.execute(post);
+		} catch (IOException e) {
+			log.error("请求失败。meg="+e.getMessage());
+		}
+		HttpEntity rsEntity = httprs.getEntity();
+
+		if(httprs.getStatusLine().getStatusCode() != 200)
+			log.error("请求异常，StatusLine="+httprs.getStatusLine());
+		if(rsEntity==null)
+			log.error("请求返回空");
+		try {
+			result = EntityUtils.toString(rsEntity, "UTF-8");
+		} catch (Exception e) {
+			log.error("请求返回字符集编码异常：Charset=UTF-8");
+		}
+
+		//关闭连接
+		try {
+			client.close();
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+		return result;
 	}
 }
