@@ -3,14 +3,14 @@ package com.wjyup.coolq.listener;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletContextEvent;
 
-import com.wjyup.coolq.util.TCPServer;
+import com.wjyup.coolq.util.*;
+import com.wjyup.coolq.util.service.ResolveMessageService;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.ContextLoaderListener;
-
-import com.wjyup.coolq.util.ConfigCache;
 
 public class ConfigCacheListener extends ContextLoaderListener {
 	private Logger log = Logger.getLogger(getClass());
@@ -61,6 +61,7 @@ public class ConfigCacheListener extends ContextLoaderListener {
 			log.error(e.getMessage(), e);
 		}
 		log.info("配置加载完毕！");
+
 	}
 
 	/**

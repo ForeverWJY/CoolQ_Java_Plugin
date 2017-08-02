@@ -5,12 +5,14 @@ import com.wjyup.coolq.util.service.ResolveMessageService;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
 /**
  * Created by WJY on 2017/8/1.
  */
+@Repository
 public class VIPVideoService extends ResolveMessageService{
     @Override
     public void doit(RequestData data) throws Exception {

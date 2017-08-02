@@ -8,6 +8,7 @@ import com.wjyup.coolq.entity.WeatherInfo;
 import com.wjyup.coolq.util.WebUtil;
 import com.wjyup.coolq.util.service.ResolveMessageService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Repository;
 
 import java.net.URLEncoder;
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.Date;
  * 天气插件
  * Created by WJY on 2017/8/1.
  */
+@Repository
 public class WeatherService extends ResolveMessageService{
 
     @Override

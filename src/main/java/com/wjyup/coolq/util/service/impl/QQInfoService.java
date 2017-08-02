@@ -7,6 +7,7 @@ import com.wjyup.coolq.util.service.ResolveMessageService;
 import com.wjyup.coolq.vo.FriendListVO;
 import com.wjyup.coolq.vo.GroupListVO;
 import com.wjyup.coolq.vo.GroupMemberListVO;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * QQ相关信息查询
  * Created by WJY on 2017/8/1.
  */
+@Repository
 public class QQInfoService extends ResolveMessageService{
     @Override
     public void doit(RequestData data) throws Exception {

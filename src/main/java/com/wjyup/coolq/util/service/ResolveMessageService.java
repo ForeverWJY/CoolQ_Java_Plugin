@@ -6,7 +6,7 @@ import com.wjyup.coolq.util.SpringApplicationContextHolder;
 import org.apache.log4j.Logger;
 
 /**
- * 公共处理信息的类，只需要继承，并实现相应的方法即可，
+ * 公共处理信息的类，只需要继承，并实现相应的方法即可，通过Spring管理，进行动态获取并调用doit方法
  * Created by WJY on 2017/8/1.
  */
 public abstract class ResolveMessageService {

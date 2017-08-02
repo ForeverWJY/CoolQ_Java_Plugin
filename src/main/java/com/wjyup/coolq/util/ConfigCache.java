@@ -1,5 +1,8 @@
 package com.wjyup.coolq.util;
 
+import com.wjyup.coolq.util.service.ResolveMessageService;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,6 +28,10 @@ public class ConfigCache {
 	public static String PHP_WS_URL;//php接口的url
 	public static String COOLQ_IMAGE_PATH;//CoolQ 图片文件夹
 	public static List<Long> MANAGER_QQ;//管理员QQ，使用逗号分隔
+	/**
+	 * 静态集合，用于保存消息处理包下面的所有类
+	 */
+	public static List<ResolveMessageService> MSG_PLUGIN_LIST = new ArrayList<>();
 
 	/**
 	 * 配置一个文件夹，存放所有处理消息的插件类，通过反射遍历并调用

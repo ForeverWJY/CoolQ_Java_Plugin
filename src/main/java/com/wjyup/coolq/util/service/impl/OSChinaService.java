@@ -13,6 +13,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Repository;
 import us.codecraft.xsoup.Xsoup;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.List;
  * OSChina资讯插件
  * Created by WJY on 2017/8/1.
  */
+@Repository
 public class OSChinaService extends ResolveMessageService{
     @Override
     public void doit(RequestData data) throws Exception {

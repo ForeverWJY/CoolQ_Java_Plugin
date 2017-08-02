@@ -3,9 +3,6 @@ package com.wjyup.coolq.util;
 import com.wjyup.coolq.entity.RequestData;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.Method;
-import java.util.Set;
-
 /**
  * 处理消息的线程
  * @author WJY
@@ -119,15 +116,18 @@ public class MessageHandle implements Runnable{
      * 新增加通过反射处理消息的方法
      */
 	private void resolveMsg(){
-        //遍历指定包下的所有类
-        Set<Class<?>> list = null;
-        try {
-            list = ScanPackage.getClasses(ConfigCache.PLUGIN_PACKAGE_PATH);
-        } catch (Exception e) {
-            log.error(e.getMessage(),e);
-        }
-        if(list != null){
-            list.forEach(cls -> {
+        //查询是否已经缓存了
+		if(ConfigCache.MSG_PLUGIN_LIST.size() > 0){
+			ConfigCache.MSG_PLUGIN_LIST.forEach(v -> {
+				try{
+					v.doit(data);
+				}catch (Exception e){
+					log.error(e.getMessage(),e);
+				}
+			});
+		}
+        	//反射调用方法
+            /*list.forEach(cls -> {
                 try {
                     System.out.println(cls.getName());
                     Class c = Class.forName(cls.getName());
@@ -139,9 +139,7 @@ public class MessageHandle implements Runnable{
                 } catch (Exception e) {
                     log.error(e.getMessage(),e);
                 }
-
-            });
-        }
+            });*/
     }
 
 	public RequestData getRequestData() {
@@ -151,5 +149,6 @@ public class MessageHandle implements Runnable{
 	public void setRequestData(RequestData requestData) {
 		this.data = requestData;
 	}
+
 
 }
