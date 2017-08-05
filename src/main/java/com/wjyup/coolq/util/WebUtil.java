@@ -1,37 +1,21 @@
 package com.wjyup.coolq.util;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import com.wjyup.coolq.entity.WeatherInfo;
+import okhttp3.*;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
-import com.wjyup.coolq.entity.WeatherInfo;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WebUtil {
 	private static Logger log = Logger.getLogger(WebUtil.class); // 日志
 	
 	//天气缓存
 	public static Map<String, WeatherInfo> weatherInfo = new HashMap<>();
-
-	public static final String[] DUER_RESULT_TYPE = {"txt","txt_card","txt_img","txt_comm","txt_card_filmpet","txt_sugg","txt_list","img_comm","gif_face","multi_news","txt_single_link","multi_normal","multi_movie"};
 
 	//okhttp mediatype
 	public static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
@@ -42,7 +26,7 @@ public class WebUtil {
 		}
 	};
 
-	
+
 	/**
 	 * 根据URL和请求类型获取请求结果，用于跨域请求
 	 * @param url
@@ -112,55 +96,24 @@ public class WebUtil {
 	}
 
 	/**
-	 * duer接口HTTPclient调用方式
+	 * okhttpclient 发送get请求
+	 * @param url 网址
+	 * @throws Exception
 	 */
-	public static String getDuerMessage(String content) {
-		//返回结果
-		String result = null;
-		if(StringUtils.isEmpty(content)){
-			return result;
-		}
-		byte[] byte_content = null;
-		try {
-			byte_content = content.getBytes("UTF-8");
-		} catch (Exception e2) {
-			log.error("请求参数字符集编码异常：Charset=UTF-8");
-		}
+	public static String get(String url) throws Exception {
+		Request request = new Request.Builder()
+				.url(url)
+				.build();
 
-		//建立连接
-		String urlstr = "https://xiaodu.baidu.com/ws";
-		CloseableHttpClient client = HttpClientBuilder.create().build();
-		HttpPost post = new HttpPost(urlstr);
-		post.setConfig(RequestConfig.DEFAULT);
-		EntityBuilder enbu = EntityBuilder.create().setContentType(ContentType.APPLICATION_JSON).setContentEncoding("UTF-8").setBinary(byte_content);
-		HttpEntity rqEntity = enbu.build();
-		post.setEntity(rqEntity);
+		okhttp3.Response response = okHttpClientThreadLocal.get().newCall(request).execute();
+		if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-		//执行请求
-		HttpResponse httprs = null;
-		try {
-			httprs = client.execute(post);
-		} catch (IOException e) {
-			log.error("请求失败。meg="+e.getMessage());
-		}
-		HttpEntity rsEntity = httprs.getEntity();
+//		Headers responseHeaders = response.headers();
+//		for (int i = 0; i < responseHeaders.size(); i++) {
+//			System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//		}
 
-		if(httprs.getStatusLine().getStatusCode() != 200)
-			log.error("请求异常，StatusLine="+httprs.getStatusLine());
-		if(rsEntity==null)
-			log.error("请求返回空");
-		try {
-			result = EntityUtils.toString(rsEntity, "UTF-8");
-		} catch (Exception e) {
-			log.error("请求返回字符集编码异常：Charset=UTF-8");
-		}
-
-		//关闭连接
-		try {
-			client.close();
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
-		return result;
+//		System.out.println(response.body().string());
+		return response.body().string();
 	}
 }

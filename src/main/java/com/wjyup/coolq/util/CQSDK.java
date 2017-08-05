@@ -153,7 +153,7 @@ public class CQSDK {
 	 */
 	public static String sendVoice(String fileName) {
 		if (StringUtils.isNotBlank(fileName)) {
-			return "[CQ:record,file=" + StringEscapeUtils.escapeJava(fileName) + "]";
+			return "[CQ:record,file=" + fileName + "]";
 		}
 		return null;
 	}
