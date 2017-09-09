@@ -27,7 +27,7 @@ public abstract class ResolveMessageService {
         switch (data.getType()) {
             //私聊消息
             case 1:
-                CQSDK.sendPrivateMsg(data.getQQ().toString(), message);
+                CQSDK.sendPrivateMsg(data.getQq().toString(), message);
                 break;
             //群消息
             case 2:

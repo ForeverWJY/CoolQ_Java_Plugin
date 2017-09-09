@@ -22,7 +22,7 @@ public class QQInfoService extends ResolveMessageService{
         String key = data.getMsg();
         //我的群列表
         if(key.length() >= 5 && "查看群列表".equals(key)){
-            if(ConfigCache.isManger(data.getQQ())){
+            if(ConfigCache.isManger(data.getQq())){
                 List<GroupListVO> list = CQSDK.getGroupList();
                 StringBuffer msg = new StringBuffer("共有"+list.size()+"个群\n");
                 for(GroupListVO vo : list){
@@ -35,7 +35,7 @@ public class QQInfoService extends ResolveMessageService{
         }
         //我的好友列表
         if(key.length() >= 6 && "查看好友列表".equals(key)){
-            if(ConfigCache.isManger(data.getQQ())){
+            if(ConfigCache.isManger(data.getQq())){
                 List<FriendListVO> list = CQSDK.getFriendList();
                 StringBuffer msg = new StringBuffer("共有"+list.size()+"个好友\n");
                 for(FriendListVO vo : list){
@@ -47,7 +47,7 @@ public class QQInfoService extends ResolveMessageService{
         }
         //查看指定群的成员列表
         if(key.length() >= 5 && key.indexOf("group:") == 0){
-            if(ConfigCache.isManger(data.getQQ())){
+            if(ConfigCache.isManger(data.getQq())){
                 String group = key.trim().replace("group:", "");
                 List<GroupMemberListVO> list = CQSDK.getGroupMemberList2(group);
                 StringBuffer msg = new StringBuffer("群号："+group+" 共有"+list.size()+"个成员\n");

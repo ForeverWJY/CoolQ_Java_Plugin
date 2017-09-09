@@ -49,7 +49,8 @@ public class IndexController {
 			// 得到Json消息
 			String str = new String(originData);
 			// 转码
-			String str1 = URLDecoder.decode(str, "GBK");
+			String str1 = URLDecoder.decode(str, "UTF-8");
+//			String str1 = new String(str.getBytes("GBK"),"utf8");
 			log.info("接收消息：" + str1);
 			Gson g = new Gson();
 			// json转对象（消息对象）

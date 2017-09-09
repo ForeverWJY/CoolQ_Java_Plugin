@@ -300,7 +300,7 @@ public class CQSDK {
 		String cookie = WebSocketUtil.sendSocketData(data.toJson());
 		if(StringUtils.isNotBlank(cookie)){
 			JSONObject jobj = JSONObject.parseObject(cookie);
-			Integer status = jobj.getInteger("Status");
+			Integer status = jobj.getInteger("status");
 			if(status == 0){
 				String result = jobj.getString("Result");
 				result = result.replaceAll(" ", "");
@@ -325,7 +325,7 @@ public class CQSDK {
 		String nickName = WebSocketUtil.sendSocketData(data.toJson());
 		if(StringUtils.isNotBlank(nickName)){
 			JSONObject jobj = JSONObject.parseObject(nickName);
-			Integer status = jobj.getInteger("Status");
+			Integer status = jobj.getInteger("status");
 			if(status == 0){
 				return jobj.getString("Result");
 			}
@@ -342,7 +342,7 @@ public class CQSDK {
 		String info = WebSocketUtil.sendSocketData(data.toJson());
 		if(StringUtils.isNotBlank(info)){
 			JSONObject jobj = JSONObject.parseObject(info);
-			Integer status = jobj.getInteger("Status");
+			Integer status = jobj.getInteger("status");
 			if(status == 0){
 				return  jobj.getString("Result");
 			}
@@ -357,7 +357,7 @@ public class CQSDK {
 	public static GroupMemberInfoVO getGroupMemberInfo(String group,String qq, boolean cache){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(qq)){
 			JSONObject jobj = new JSONObject();
-			jobj.put("Fun", "getGroupMemberInfo");
+			jobj.put("fun", "getGroupMemberInfo");
 			jobj.put("Group", group);
 			jobj.put("QQ", qq);
 			jobj.put("Cache", booleanToInteger(cache));
@@ -382,7 +382,7 @@ public class CQSDK {
 	public static StrangerInfoVO getStrangerInfo(String qq, boolean cache){
 		if(StringUtils.isNotBlank(qq)){
 			JSONObject jobj = new JSONObject();
-			jobj.put("Fun", "getStrangerInfo");
+			jobj.put("fun", "getStrangerInfo");
 			jobj.put("QQ", qq);
 			jobj.put("Cache", booleanToInteger(cache));
 			String info = WebSocketUtil.sendSocketData(jobj.toJSONString());
@@ -406,7 +406,7 @@ public class CQSDK {
 	public static String GetFontInfo(String id){
 		if(StringUtils.isNotBlank(id)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "GetFontInfo");
+			obj.put("fun", "GetFontInfo");
 			obj.put("ID", id);
 			String result = WebSocketUtil.sendSocketData(obj.toJSONString());
 			return result;
@@ -421,7 +421,7 @@ public class CQSDK {
 	public static String GetAnonymousInfo(String source){
 		if(StringUtils.isNotBlank(source)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "GetAnonymousInfo");
+			obj.put("fun", "GetAnonymousInfo");
 			obj.put("source", source);
 			String result = WebSocketUtil.sendSocketData(obj.toJSONString());
 			return result;
@@ -436,7 +436,7 @@ public class CQSDK {
 	public static String GetFileInfo(String source){
 		if(StringUtils.isNotBlank(source)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "GetFileInfo");
+			obj.put("fun", "GetFileInfo");
 			obj.put("source", source);
 			String result = WebSocketUtil.sendSocketData(obj.toJSONString());
 			return result;
@@ -450,7 +450,7 @@ public class CQSDK {
 	public static String setGroupKick(String group, String qq, boolean refuse){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(qq)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupKick");
+			obj.put("fun", "setGroupKick");
 			obj.put("Group", group);
 			obj.put("QQ", qq);
 			obj.put("RefuseJoin", refuse);
@@ -466,7 +466,7 @@ public class CQSDK {
 	public static String setGroupBan(String group, String qq, Integer time){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(qq) && time != null){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupBan");
+			obj.put("fun", "setGroupBan");
 			obj.put("Group", group);
 			obj.put("QQ", qq);
 			obj.put("Time", time);//0为解除禁言
@@ -483,7 +483,7 @@ public class CQSDK {
 	public static String setGroupAdmin(String group, String qq, boolean become){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(qq)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupAdmin");
+			obj.put("fun", "setGroupAdmin");
 			obj.put("Group", group);
 			obj.put("QQ", qq);
 			obj.put("Become", booleanToInteger(become));
@@ -500,7 +500,7 @@ public class CQSDK {
 	public static String setGroupWholeBan(String group, boolean isGag){
 		if(StringUtils.isNotBlank(group)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupWholeBan");
+			obj.put("fun", "setGroupWholeBan");
 			obj.put("Group", group);
 			obj.put("IsGag", booleanToInteger(isGag));
 			String result = WebSocketUtil.sendSocketData(obj.toJSONString());
@@ -516,7 +516,7 @@ public class CQSDK {
 	public static String setGroupAnonymous(String group, boolean open){
 		if(StringUtils.isNotBlank(group)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupAnonymous");
+			obj.put("fun", "setGroupAnonymous");
 			obj.put("Group", group);
 			obj.put("Open", booleanToInteger(open));
 			String result = WebSocketUtil.sendSocketData(obj.toJSONString());
@@ -531,7 +531,7 @@ public class CQSDK {
 	public static String setGroupCard(String group, String qq, String card){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(qq) && StringUtils.isNotBlank(card)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupCard");
+			obj.put("fun", "setGroupCard");
 			obj.put("Group", group);
 			obj.put("QQ", qq);
 			obj.put("Card", card);//为空时清空群名片
@@ -547,7 +547,7 @@ public class CQSDK {
 	public static String setDiscussLeave(String discuss){
 		if(StringUtils.isNotBlank(discuss)){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setDiscussLeave");
+			obj.put("fun", "setDiscussLeave");
 			obj.put("Group", discuss);
 			String result = WebSocketUtil.sendSocketData(obj.toJSONString());
 			return result;
@@ -561,7 +561,7 @@ public class CQSDK {
 	public static String setGroupAddRequest(String responseFlag, Integer subType, Integer type, String Msg){
 		if(StringUtils.isNotBlank(responseFlag) && subType != null && type != null){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupAddRequest");
+			obj.put("fun", "setGroupAddRequest");
 			obj.put("responseFlag", responseFlag);
 			obj.put("subtype", subType);//  1/群添加,2/群邀请
 			obj.put("type", type);//  1/通过,2/拒绝
@@ -578,7 +578,7 @@ public class CQSDK {
 	public static String setGroupAnonymousBan(String group, String anonymous, Integer type, Integer time){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(anonymous) && time != null){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupAnonymousBan");
+			obj.put("fun", "setGroupAnonymousBan");
 			obj.put("Group", group);
 			obj.put("Anonymous", anonymous);//  1/群添加,2/群邀请
 			obj.put("Time", time);//  1/通过,2/拒绝
@@ -594,7 +594,7 @@ public class CQSDK {
 	public static String setFriendAddRequest(String responseFlag, Integer type, String name){
 		if(StringUtils.isNotBlank(responseFlag) && StringUtils.isNotBlank(name) && type != null){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setFriendAddRequest");
+			obj.put("fun", "setFriendAddRequest");
 			obj.put("responseFlag", responseFlag);
 			obj.put("Type", type);// 1/通过,2/拒绝
 			obj.put("Name", name);//备注
@@ -610,7 +610,7 @@ public class CQSDK {
 	public static String setGroupSpecialTitle(String group, String qq, String tip, Integer time){
 		if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(qq) && StringUtils.isNotBlank(tip) && time != null){
 			JSONObject obj = new JSONObject();
-			obj.put("Fun", "setGroupSpecialTitle");
+			obj.put("fun", "setGroupSpecialTitle");
 			obj.put("Group", group);
 			obj.put("QQ", qq);
 			obj.put("Tip", tip);//头衔名称
@@ -811,7 +811,7 @@ public class CQSDK {
 		String result = WebSocketUtil.sendSocketData(data.toJson());
 		if(StringUtils.isNotBlank(result)){
 			JSONObject obj = JSON.parseObject(result);
-			if(obj.getInteger("Status") == 0 && obj.containsKey("data")){
+			if(obj.getInteger("status") == 0 && obj.containsKey("data")){
 				JSONArray jarr = obj.getJSONArray("data");
 				GroupListVO listVO = null;
 				for(int a=0; a<jarr.size(); a++){
@@ -835,7 +835,7 @@ public class CQSDK {
 		System.out.println(result);
 		if(StringUtils.isNotBlank(result)){
 			JSONObject obj = JSONObject.parseObject(result);
-			if(obj.getInteger("Status") == 0 && obj.containsKey("Result")){
+			if(obj.getInteger("status") == 0 && obj.containsKey("Result")){
 				JSONObject jobj = obj.getJSONObject("Result");
 				Iterator<String> iter = jobj.keySet().iterator();
 				while(iter.hasNext()){
@@ -947,7 +947,7 @@ public class CQSDK {
 			Data data = new Data();
 			data.setFun("getHeadimgLink");
 			data.setSize(size);
-			data.setQQ(Long.parseLong(qq));
+			data.setQq(Long.parseLong(qq));
 			String result = WebSocketUtil.sendSocketData(data.toJson());
 			return result;
 		}
@@ -964,7 +964,7 @@ public class CQSDK {
 		if(StringUtils.isNotBlank(qqList)){
 			Data data = new Data();
 			data.setFun("getMoreQQHeadimg");
-			data.setQQList(qqList);
+			data.setQqList(qqList);
 			String result = WebSocketUtil.sendSocketData(data.toJson());
 			return result;
 		}
@@ -981,7 +981,7 @@ public class CQSDK {
 		if(StringUtils.isNotBlank(qqList)){
 			Data data = new Data();
 			data.setFun("getMoreQQName");
-			data.setQQList(qqList);
+			data.setQqList(qqList);
 			String result = WebSocketUtil.sendSocketData(data.toJson());
 			return result;
 		}

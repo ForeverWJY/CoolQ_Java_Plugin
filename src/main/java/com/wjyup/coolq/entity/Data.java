@@ -19,10 +19,10 @@ public class Data implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long QQ;
-	private String Msg;//消息
-	private String Fun;// 方法名
-	private Integer Type;// 消息类型
+	private Long qq;
+	private String msg;//消息
+	private String fun;// 方法名
+	private Integer type;// 消息类型
 	/*
  	代码(Type)	说明	    含有的子消息类型(SubType)
 		1	私聊信息	    11/来自好友 1/来自在线状态 2/来自群 3/来自讨论组
@@ -37,15 +37,15 @@ public class Data implements Serializable {
 		302	请求添加群	1/他人申请入群 2/自己(即登录号)受邀入群
 	 */
 	
-	private Integer Skn1;//置全群禁言开关，0/关闭 1/开启，默认为0
-	private Integer Time;//置群成员禁言 禁言时间，单位:秒，默认为0(解禁)
-	private Integer Count;//赞的次数
-	private String File;//语音文件名,不带路径
-	private String Format;//所需的语音文件格式，目前支持 mp3,amr,wma,m4a,spx,ogg,wav,flac
-	private Long Group;//群号码
-	private Integer Size;//头像大小
-	private String QQList;//QQ列表，每个QQ用 _ 分开
-	private String GroupList;//群列表，每个群用 - 分开
+	private Integer skn1;//置全群禁言开关，0/关闭 1/开启，默认为0
+	private Integer time;//置群成员禁言 禁言时间，单位:秒，默认为0(解禁)
+	private Integer count;//赞的次数
+	private String file;//语音文件名,不带路径
+	private String format;//所需的语音文件格式，目前支持 mp3,amr,wma,m4a,spx,ogg,wav,flac
+	private Long group;//群号码
+	private Integer size;//头像大小
+	private String qqList;//QQ列表，每个QQ用 _ 分开
+	private String groupList;//群列表，每个群用 - 分开
 
 	public Data() {
 	}
@@ -53,39 +53,39 @@ public class Data implements Serializable {
 	//用于发送私聊、讨论组、群消息的方法
 	public Data(Long qQ, String msg, String fun) {
 		super();
-		QQ = qQ;
+		qq = qQ;
 		setMsg(msg);
-		Fun = fun;
+		this.fun = fun;
 	}
 	
 	//用于取登录QQ、取Cookies、取登录昵称、取CsrfToken方法
 	public Data(String fun) {
 		super();
-		Fun = fun;
+		this.fun = fun;
 	}
 
 	//用于发送赞的方法
 	public Data(Long qQ, String fun, Integer count) {
 		super();
-		QQ = qQ;
-		Fun = fun;
-		Count = count;
+		qq = qQ;
+		this.fun = fun;
+		this.count = count;
 	}
 	
 	//用于接收语音的方法
 	public Data(String fun, String file, String format) {
 		super();
-		Fun = fun;
-		File = file;
-		Format = format;
+		this.fun = fun;
+		this.file = file;
+		this.format = format;
 	}
 	
 	//用于取成员信息的方法
 	public Data(Long qQ, String fun, Long group) {
 		super();
-		QQ = qQ;
-		Fun = fun;
-		Group = group;
+		qq = qQ;
+		this.fun = fun;
+		this.group = group;
 	}
 
 	/**
@@ -111,118 +111,107 @@ public class Data implements Serializable {
 		return g.toJson(map);
 	}
 
-	public Long getQQ() {
-		return QQ;
+	public Long getQq() {
+		return qq;
 	}
 
-	public void setQQ(Long qQ) {
-		QQ = qQ;
+	public void setQq(Long qq) {
+		this.qq = qq;
 	}
 
 	public String getMsg() {
-		return Msg;
+		return msg;
 	}
 
 	public void setMsg(String msg) {
-		//HTTP GET需要base64一下
-		/*if("2".equals(ConfigCache.WS_SEND_TYPE)){
-			try {
-				Msg = new String(Base64.encodeBase64(msg.getBytes("UTF-8")));
-				//Msg = java.util.Base64.getEncoder().encodeToString(msg.getBytes("UTF-8"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}else{
-			Msg = msg;
-		}*/
-		Msg = msg;
+		this.msg = msg;
 	}
 
 	public String getFun() {
-		return Fun;
+		return fun;
 	}
 
 	public void setFun(String fun) {
-		Fun = fun;
+		this.fun = fun;
 	}
 
 	public Integer getType() {
-		return Type;
+		return type;
 	}
 
 	public void setType(Integer type) {
-		Type = type;
+		this.type = type;
 	}
 
 	public Integer getSkn1() {
-		return Skn1;
+		return skn1;
 	}
 
 	public void setSkn1(Integer skn1) {
-		Skn1 = skn1;
+		this.skn1 = skn1;
 	}
 
 	public Integer getTime() {
-		return Time;
+		return time;
 	}
 
 	public void setTime(Integer time) {
-		Time = time;
+		this.time = time;
 	}
 
 	public Integer getCount() {
-		return Count;
+		return count;
 	}
 
 	public void setCount(Integer count) {
-		Count = count;
+		this.count = count;
 	}
 
 	public String getFile() {
-		return File;
+		return file;
 	}
 
 	public void setFile(String file) {
-		File = file;
+		this.file = file;
 	}
 
 	public String getFormat() {
-		return Format;
+		return format;
 	}
 
 	public void setFormat(String format) {
-		Format = format;
+		this.format = format;
 	}
 
 	public Long getGroup() {
-		return Group;
+		return group;
 	}
 
 	public void setGroup(Long group) {
-		Group = group;
+		this.group = group;
 	}
 
 	public Integer getSize() {
-		return Size;
+		return size;
 	}
 
 	public void setSize(Integer size) {
-		Size = size;
+		this.size = size;
 	}
 
-	public String getQQList() {
-		return QQList;
+	public String getQqList() {
+		return qqList;
 	}
 
-	public void setQQList(String QQList) {
-		this.QQList = QQList;
+	public void setQqList(String qqList) {
+		this.qqList = qqList;
 	}
 
 	public String getGroupList() {
-		return GroupList;
+		return groupList;
 	}
 
 	public void setGroupList(String groupList) {
-		GroupList = groupList;
+		this.groupList = groupList;
 	}
 }

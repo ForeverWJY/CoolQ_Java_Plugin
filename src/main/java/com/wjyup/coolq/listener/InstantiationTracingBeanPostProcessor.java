@@ -41,7 +41,7 @@ public class InstantiationTracingBeanPostProcessor implements ApplicationListene
             //获取所有bean的名称
             String [] beans= event.getApplicationContext().getBeanDefinitionNames();
             for(String beanName:beans){
-                System.out.println(beanName);
+//                System.out.println(beanName);
                 for (String s : pluginList) {
                     if(s.equalsIgnoreCase(beanName)){
                         ResolveMessageService rms = (ResolveMessageService) event.getApplicationContext().getBean(beanName);

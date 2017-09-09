@@ -1,26 +1,23 @@
 # CoolQ_Java_Plugin
-## 架构
+## 设计
 1. 项目使用JDK8+Maven+Spring+Spring MVC+Mybatis，依赖PHP对接插件（cc.1sls.CtPe.cpk）做服务端，[插件论坛下载地址](https://cqp.cc/forum.php?mod=viewthread&tid=28532)
 2. 消息处理类需要继承抽象类`ResolveMessageService`，并加入`@Repository`注解，消息处理类存放在`com.wjyup.coolq.util.service.impl`包下，可以在`data.properties`中设置路径，通过扫描该包下的所有类，并调用doit方法，进行消息处理，以前是通过反射进行加载，现改为Spring容器初始化完毕之后加载插件类
+3. 需要MySQL数据库，详情看`applicationContext.xml`信息
 
-## 感谢HSTB大神的支持，使得Java实现websocket方式推送消息（原始），现在改为HTTP推送，接收使用POST JSON方式，[插件的开发文档地址](https://d.1sls.cn/CtPePro)
-## 需先启用PHP对接插件，然后设置如下：
+## 感谢HSTB大神的大力支持
+## 需先启用酷Q的插件，然后设置如下：
 
-### Websocket设置(1.4.2版本已改为Socket+HTTP方式)：
-1. 接口地址：`127.0.0.1:8080/coolq/coolq`
-2. 请求方式：`POST`，数据格式：`JSON`
-3. 勾选：开启双向交互模式&监听端口：`1970`
-4. 点击“保存并重新加载进程”
+### 2.1.2版本（就版本代码已删掉，原因你懂得）：
+1. 接口地址：`http://127.0.0.1:8080/coolq/coolq`，数据结构：`json`
+2. 动态交互-监听端口：`1970`
+3. 数据处理，删除key输入框的值
+4. 关闭设置界面并刷新配置
 5. 启动Java Web项目，可以先启动
-
-### Socket + HTTP 推送设置：
-1. 提交方式选择：Socket，数据格式：`Json`
-2. 然后设置IP：`127.0.0.1`，端口：`8888`，启动一下java web coolq服务，点击`测试连通性`
-3. 扩展选项卡里面的动态交互，勾选`开启动态交互`，设置监听端口：`1970`
-4. 校验数据完整性可以选择是否设置，如果勾选，请设置`Key`和`Secret`
-5. 根据设置在`data.properties`文件中设置对应项
+6. `data.properties`是配置文件，请结合`ConfigCacheListener`和`ConfigCache`一起查看
 
 ## 欢迎加入QQ讨论群：553601318
 
 ## 链接
-[CtPe插件地址](https://github.com/Hstb1230/CtPe)
+[插件地址](https://github.com/Hstb1230/CtPe)
+
+[Doc帮助文档](http://doc.inlinc.org/http-to-cq/389309)

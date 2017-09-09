@@ -49,9 +49,9 @@ public class ConfigCacheListener extends ContextLoaderListener {
 			for(String key : manages){
 				ConfigCache.MANAGER_QQ.add(Long.parseLong(key));
 			}
-			//消息推送模式
+			//消息接收模式
 			ConfigCache.WS_SEND_TYPE = p.getProperty("ws.send.type");
-			if("2".equals(ConfigCache.WS_SEND_TYPE)){
+			if(StaticConf.WS_SEND_TYPE_SOCKET.equals(ConfigCache.WS_SEND_TYPE)){
 				//启动tcp server
 				startSocket();
 			}
