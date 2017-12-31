@@ -37,9 +37,6 @@ public class ConfigCache {
 	 * 配置一个文件夹，存放所有处理消息的插件类，通过反射遍历并调用
 	 */
 	public static String PLUGIN_PACKAGE_PATH;
-
-	//根据关键字存放缓存，比如：oschina_news
-	public static HashMap<String, Object> mapCache = new HashMap<String, Object>(2);
 	/*
 	 * oschina_news oschina综合资讯
 	 * oschina_soft oschina软件更新资讯

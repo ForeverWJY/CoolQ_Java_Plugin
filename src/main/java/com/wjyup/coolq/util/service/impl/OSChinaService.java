@@ -16,10 +16,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Repository;
 import us.codecraft.xsoup.Xsoup;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * OSChina资讯插件
@@ -40,26 +37,16 @@ public class OSChinaService extends ResolveMessageService{
         }
     }
 
-    private List<String> getOschinaNews() {
-        if(ConfigCache.mapCache.get("oschina_news") == null ||
-                ConfigCache.mapCache.get("oschina_soft") == null){
+    private List<String> getOschinaNews() throws Exception{
+        //优先获取缓存的数据
+        String oschinaNews = (String) TempCache.CACHE.get("oschina_news");
+        String oschinaSoft = (String) TempCache.CACHE.get("oschina_soft");
+        if(StringUtils.isBlank(oschinaNews) || StringUtils.isBlank(oschinaSoft)){
             writeOschinaCacheByAPI();
         }
-        List<String> list = null;
-        //读取缓存
-        TempCache t1 = (TempCache) ConfigCache.mapCache.get("oschina_news");
-        TempCache t2 = (TempCache) ConfigCache.mapCache.get("oschina_soft");
-        if(t1 != null && t2 != null){
-            //如果缓存过期了，重新加载
-            if(t1.isOverDeadLineTime()){
-                writeOschinaCacheByAPI();
-            }
-            t1 = (TempCache) ConfigCache.mapCache.get("oschina_news");
-            t2 = (TempCache) ConfigCache.mapCache.get("oschina_soft");
-            list = new ArrayList<>(2);
-            list.add(t1.getObject().toString());
-            list.add(t2.getObject().toString());
-        }
+        List<String> list = new ArrayList<>(2);
+        list.add(TempCache.CACHE.get("oschina_news").toString());
+        list.add(TempCache.CACHE.get("oschina_soft").toString());
         return list;
     }
 
@@ -69,10 +56,9 @@ public class OSChinaService extends ResolveMessageService{
     private void writeOschinaCacheByAPI(){
         try {
             //获取资讯消息
-            String url = "https://www.oschina.net/action/apiv2/sub_list?token=d6112fa662bc4bf21084670a857fbd20";
+            String url = "http://blog.wjyup.com/test/api/oschina/";
             String userAgent = "OSChina.NET/1.0 (oscapp; 283; Android 6.0.1; X800+ Build/BEXCNFN5902012221S; 2ec82093-4c87-4be3-9cb1-bcd735aef591)";
             Connection.Response response = Jsoup.connect(url).userAgent(userAgent)
-                    .header("AppToken", "799293cae64a1ef4c36a83d362f3f80cb9007505")
                     .method(Connection.Method.GET)
                     .ignoreContentType(true)
                     .execute();
@@ -81,8 +67,8 @@ public class OSChinaService extends ResolveMessageService{
                     log.info("oschina api 数据："+response.body());
                 }
                 JSONObject root = JSON.parseObject(response.body());
-                StringBuffer news = new StringBuffer("OSChina资讯：");
-                StringBuffer softs = new StringBuffer("OSChina资讯：");
+                StringBuilder news = new StringBuilder("OSChina资讯：");
+                StringBuilder softs = new StringBuilder("OSChina资讯：");
                 if(root.containsKey("code") && root.getIntValue("code") == 1){//success
                     JSONObject result = root.getJSONObject("result");
                     if(result.containsKey("items") && result.getJSONArray("items").size() > 0){
@@ -94,29 +80,25 @@ public class OSChinaService extends ResolveMessageService{
                             JSONObject obj = JSONObject.parseObject(txt);
                             if(i <= 10){
                                 if(obj.containsKey("title") && StringUtils.isNotBlank(obj.getString("title"))){
-                                    news.append("\n"+i+"."+obj.getString("title")+"\n");
+                                    news.append("\n").append(i).append(".").append(obj.getString("title")).append("\n");
                                 }
                                 if(obj.containsKey("href") && StringUtils.isNotBlank(obj.getString("href"))){
-                                    news.append("->链接："+obj.getString("href")+"\n");
+                                    news.append("->链接：").append(obj.getString("href"));
                                 }
                             }else{
                                 if(obj.containsKey("title") && StringUtils.isNotBlank(obj.getString("title"))){
-                                    softs.append("\n"+i+"."+obj.getString("title")+"\n");
+                                    softs.append("\n").append(i).append(".").append(obj.getString("title")).append("\n");
                                 }
                                 if(obj.containsKey("href") && StringUtils.isNotBlank(obj.getString("href"))){
-                                    softs.append("->链接："+obj.getString("href")+"\n");
+                                    softs.append("->链接：").append(obj.getString("href"));
                                 }
                             }
                             i++;
                         }
                     }
                     //写入缓存
-                    Date cacheTime = new Date();
-                    long deadLineTime = cacheTime.getTime() + (1*60*60*1000);
-                    TempCache temp1 = new TempCache(new Date(), new Date(deadLineTime), news.toString().substring(0, news.length() - 1));
-                    TempCache temp2 = new TempCache(new Date(), new Date(deadLineTime), softs.toString().substring(0, softs.length() - 1));
-                    ConfigCache.mapCache.put("oschina_news", temp1);
-                    ConfigCache.mapCache.put("oschina_soft", temp2);
+                    TempCache.CACHE.put("oschina_news",news.deleteCharAt(news.length() - 1).toString());
+                    TempCache.CACHE.put("oschina_soft", softs.deleteCharAt(softs.length() - 1).toString());
                 }
             }else{
                 log.error("oschina api 信息获取状态码："+response.statusCode());
@@ -128,7 +110,7 @@ public class OSChinaService extends ResolveMessageService{
 
     /**
      * 读取oschina的数据，写入到缓存中
-     * 已标记为废弃
+     * 已标记为废弃,使用：<code>writeOschinaCacheByAPI</code>
      */
     @Deprecated
     private void writeOschinaCache(){
@@ -159,12 +141,8 @@ public class OSChinaService extends ResolveMessageService{
                 log.info(news.toString());
                 log.info(softs.toString());
                 //写入缓存
-                Date cacheTime = new Date();
-                long deadLineTime = cacheTime.getTime() + (8*60*60*1000);
-                TempCache temp1 = new TempCache(new Date(), new Date(deadLineTime), news.toString());
-                TempCache temp2 = new TempCache(new Date(), new Date(deadLineTime), softs.toString());
-                ConfigCache.mapCache.put("oschina_news", temp1);
-                ConfigCache.mapCache.put("oschina_soft", temp2);
+                TempCache.CACHE.put("oschina_news",news.deleteCharAt(news.length() - 1).toString());
+                TempCache.CACHE.put("oschina_soft", softs.deleteCharAt(softs.length() - 1).toString());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
