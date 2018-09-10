@@ -1,15 +1,11 @@
 package com.wjyup.coolq.entity;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.wjyup.coolq.util.ConfigCache;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * 消息实体类
@@ -43,9 +39,7 @@ public class Data implements Serializable {
 	private String file;//语音文件名,不带路径
 	private String format;//所需的语音文件格式，目前支持 mp3,amr,wma,m4a,spx,ogg,wav,flac
 	private Long group;//群号码
-	private Integer size;//头像大小
-	private String qqList;//QQ列表，每个QQ用 _ 分开
-	private String groupList;//群列表，每个群用 - 分开
+	private Integer cache;//缓存
 
 	public Data() {
 	}
@@ -53,8 +47,8 @@ public class Data implements Serializable {
 	//用于发送私聊、讨论组、群消息的方法
 	public Data(Long qQ, String msg, String fun) {
 		super();
-		qq = qQ;
-		setMsg(msg);
+		this.qq = qQ;
+		this.msg = msg;
 		this.fun = fun;
 	}
 	
@@ -67,7 +61,7 @@ public class Data implements Serializable {
 	//用于发送赞的方法
 	public Data(Long qQ, String fun, Integer count) {
 		super();
-		qq = qQ;
+		this.qq = qQ;
 		this.fun = fun;
 		this.count = count;
 	}
@@ -87,6 +81,22 @@ public class Data implements Serializable {
 		this.fun = fun;
 		this.group = group;
 	}
+	
+	//用于接收图片信息的方法
+	public Data(String fun, String file) {
+		super();
+		this.fun = fun;
+		this.file = file;
+	}
+	
+	//获取群成员信息
+	public Data(Long qQ, String fun, Long group, Integer cache) {
+		super();
+		qq = qQ;
+		this.fun = fun;
+		this.group = group;
+		this.cache = cache;
+	}
 
 	/**
 	 * 转json字符串
@@ -94,8 +104,7 @@ public class Data implements Serializable {
 	 * @return
 	 */
 	public String toJson() {
-		Gson g = new GsonBuilder().create();
-		return g.toJson(this);
+		return JSON.toJSONString(this);
 	}
 	
 	/**
@@ -107,8 +116,7 @@ public class Data implements Serializable {
 		ArrayList<Data> arr = new ArrayList<Data>();
 		arr.add(this);
 		map.put("data", arr);
-		Gson g = new Gson();
-		return g.toJson(map);
+		return JSON.toJSONString(map);
 	}
 
 	public Long getQq() {
@@ -191,27 +199,11 @@ public class Data implements Serializable {
 		this.group = group;
 	}
 
-	public Integer getSize() {
-		return size;
+	public Integer getCache() {
+		return cache;
 	}
 
-	public void setSize(Integer size) {
-		this.size = size;
-	}
-
-	public String getQqList() {
-		return qqList;
-	}
-
-	public void setQqList(String qqList) {
-		this.qqList = qqList;
-	}
-
-	public String getGroupList() {
-		return groupList;
-	}
-
-	public void setGroupList(String groupList) {
-		this.groupList = groupList;
+	public void setCache(Integer cache) {
+		this.cache = cache;
 	}
 }

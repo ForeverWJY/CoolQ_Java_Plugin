@@ -1,5 +1,8 @@
 package com.wjyup.coolq.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +11,8 @@ import java.io.Serializable;
  * @author WJY
  *
  */
+@Getter
+@Setter
 public class StrangerInfoVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -19,46 +24,6 @@ public class StrangerInfoVO implements Serializable {
 	private String Name;// 昵称
 
 	public StrangerInfoVO() {
-	}
-
-	public Long getQQ() {
-		return QQ;
-	}
-
-	public void setQQ(Long qQ) {
-		QQ = qQ;
-	}
-
-	public Integer getGender() {
-		return Gender;
-	}
-
-	public void setGender(Integer gender) {
-		Gender = gender;
-	}
-
-	public Integer getOld() {
-		return Old;
-	}
-
-	public void setOld(Integer old) {
-		Old = old;
-	}
-
-	public String getName() {
-		return Name;
-	}
-
-	public void setName(String name) {
-		Name = name;
-	}
-
-	public Integer getStatus() {
-		return Status;
-	}
-
-	public void setStatus(Integer status) {
-		Status = status;
 	}
 
 }

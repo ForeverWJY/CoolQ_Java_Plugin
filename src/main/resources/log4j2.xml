@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="300">
+	<properties>
+		<property name="LOG_HOME">/app/log</property>
+		<property name="FILE_NAME">coolq-java</property>
+	</properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<RollingRandomAccessFile name="TimFile" fileName="${LOG_HOME}/${FILE_NAME}.log"
+								 filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd HH-mm}-%i.log">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+				<SizeBasedTriggeringPolicy size="1024 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+
+		<!-- 存储所有error信息 -->
+		<RollingRandomAccessFile name="errorFile" fileName="${LOG_HOME}/${FILE_NAME}-error.log" immediateFlush="false"
+								 filePattern="${fileGz}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.web-error.gz">
+			<PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} [%t] %-5level %logger{36} %L %M - %msg%xEx%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="6" modulate="true" />
+				<SizeBasedTriggeringPolicy size="50 MB"/>
+			</Policies>
+			<Filters>
+				<!-- 只记录error级别信息 -->
+				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
+			<DefaultRolloverStrategy max="50"/>
+		</RollingRandomAccessFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="coolq-java" level="DEBUG" additivity="true">
+			<AppenderRef ref="TimFile" />
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="errorFile"/>
+		</Root>
+	</Loggers>
+</Configuration>

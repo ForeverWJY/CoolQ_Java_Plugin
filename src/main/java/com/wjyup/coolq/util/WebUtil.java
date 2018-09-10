@@ -1,8 +1,12 @@
 package com.wjyup.coolq.util;
 
 import com.wjyup.coolq.entity.WeatherInfo;
-import okhttp3.*;
-import org.apache.log4j.Logger;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
@@ -12,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebUtil {
-	private static Logger log = Logger.getLogger(WebUtil.class); // 日志
+	private static Logger log = LogManager.getLogger(WebUtil.class);
 	
 	//天气缓存
 	public static Map<String, WeatherInfo> weatherInfo = new HashMap<>();
