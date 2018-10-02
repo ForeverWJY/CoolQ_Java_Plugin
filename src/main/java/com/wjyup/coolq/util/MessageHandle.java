@@ -152,7 +152,14 @@ public class MessageHandle implements Runnable{
 		if(!ConfigCache.MSG_PLUGIN_LIST.isEmpty()){
 			ConfigCache.MSG_PLUGIN_LIST.forEach(v -> {
 				try{
-					v.doit(data);
+					if (SpringContext.getConfigCache().isDO_CQ_MSG()) {
+						v.doit(data);
+					} else {
+						//不处理包含CQ码的请求
+						if (!data.getMsg().contains("CQ:")) {
+							v.doit(data);
+						}
+					}
 				}catch (Exception e){
 					log.error(e.getMessage(),e);
 				}

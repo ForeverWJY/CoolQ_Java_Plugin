@@ -24,7 +24,7 @@ public class InitialPlugins implements ApplicationListener<ContextRefreshedEvent
         log.info("开始加载插件：");
         long start = System.currentTimeMillis();
 
-        //遍历指定包下的所有类
+        //遍历指定包下的插件类并添加到集合中
         Set<Class<?>> list;
         try {
             list = ScanPackage.getClasses(SpringContext.getConfigCache().getPLUGIN_PACKAGE_PATH());
@@ -41,7 +41,8 @@ public class InitialPlugins implements ApplicationListener<ContextRefreshedEvent
             });
             ConfigCache.MSG_PLUGIN_LIST.addAll(msgList);
 
-            log.info("插件加载完毕！耗时{}毫秒！，加载的插件列表如下：\n{}", (System.currentTimeMillis() - start), Json.toJson(list));
+            log.info("插件加载完毕！耗时{}毫秒！，加载的插件列表如下：", (System.currentTimeMillis() - start));
+            list.forEach(x -> log.info(x.getName()));
         }
     }
 }

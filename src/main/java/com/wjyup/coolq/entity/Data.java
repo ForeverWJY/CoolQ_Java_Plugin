@@ -1,6 +1,8 @@
 package com.wjyup.coolq.entity;
 
 import com.alibaba.fastjson.JSON;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.Map;
  * 消息实体类
  * @author WJY
  */
+@Getter
+@Setter
 public class Data implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -117,93 +121,5 @@ public class Data implements Serializable {
 		arr.add(this);
 		map.put("data", arr);
 		return JSON.toJSONString(map);
-	}
-
-	public Long getQq() {
-		return qq;
-	}
-
-	public void setQq(Long qq) {
-		this.qq = qq;
-	}
-
-	public String getMsg() {
-		return msg;
-	}
-
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
-
-	public String getFun() {
-		return fun;
-	}
-
-	public void setFun(String fun) {
-		this.fun = fun;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public Integer getSkn1() {
-		return skn1;
-	}
-
-	public void setSkn1(Integer skn1) {
-		this.skn1 = skn1;
-	}
-
-	public Integer getTime() {
-		return time;
-	}
-
-	public void setTime(Integer time) {
-		this.time = time;
-	}
-
-	public Integer getCount() {
-		return count;
-	}
-
-	public void setCount(Integer count) {
-		this.count = count;
-	}
-
-	public String getFile() {
-		return file;
-	}
-
-	public void setFile(String file) {
-		this.file = file;
-	}
-
-	public String getFormat() {
-		return format;
-	}
-
-	public void setFormat(String format) {
-		this.format = format;
-	}
-
-	public Long getGroup() {
-		return group;
-	}
-
-	public void setGroup(Long group) {
-		this.group = group;
-	}
-
-	public Integer getCache() {
-		return cache;
-	}
-
-	public void setCache(Integer cache) {
-		this.cache = cache;
 	}
 }

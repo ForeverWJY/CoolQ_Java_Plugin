@@ -1,6 +1,5 @@
 package com.wjyup.coolq.util;
 
-import com.wjyup.coolq.entity.WeatherInfo;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,10 +16,6 @@ import java.util.Map;
 
 public class WebUtil {
 	private static Logger log = LogManager.getLogger(WebUtil.class);
-	
-	//天气缓存
-	public static Map<String, WeatherInfo> weatherInfo = new HashMap<>();
-
 	//okhttp mediatype
 	public static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
 	private static ThreadLocal<OkHttpClient> okHttpClientThreadLocal = new ThreadLocal<OkHttpClient>(){
@@ -33,15 +28,12 @@ public class WebUtil {
 
 	/**
 	 * 根据URL和请求类型获取请求结果，用于跨域请求
-	 * @param url
-	 * @param urlType POST OR GET
-	 * @return
+	 * @param url 请求地址
+	 * @param method org.jsoup.Method
+	 * @return String 请求结果
 	 */
-	public static String getUrlResult(String url,String urlType){
-		Method method = null;
-		if(urlType!= null && !"".equals(urlType) && urlType.equalsIgnoreCase("post")){
-			method = Method.POST;
-		}else{
+	public static String getUrlResult(String url,Method method){
+		if(method == null){
 			method = Method.GET;
 		}
 		Response resp = null;
@@ -59,11 +51,11 @@ public class WebUtil {
 	
 	/**
 	 * 根据URL和请求类型获取请求结果，用于跨域请求
-	 * @param url
+	 * @param url 请求地址
 	 * @param method Method.POST Method.GET
 	 * @param data 参数
 	 * @param cookie cookies
-	 * @return
+	 * @return String 请求结果
 	 */
 	public static String fetch(String url, Method method, Map<String, String> data, Map<String, String> cookie){
 		Response resp = null;
@@ -82,7 +74,7 @@ public class WebUtil {
 	 * okhttpclient 提交POST数据
 	 * @param url 链接
 	 * @param json  JSON数据
-	 * @return
+	 * @return String 请求结果
 	 * @throws IOException
 	 */
 	public static String post(String url, String json) throws IOException {

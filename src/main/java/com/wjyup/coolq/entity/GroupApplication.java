@@ -1,5 +1,8 @@
 package com.wjyup.coolq.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,6 +11,8 @@ import java.util.Date;
  * 
  * @author WJY
  */
+@Getter
+@Setter
 public class GroupApplication implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -36,77 +41,4 @@ public class GroupApplication implements Serializable {
 		this.discuss = discuss;
 		this.msg = msg;
 	}
-
-	public String getDiscuss() {
-		return discuss;
-	}
-
-	public String getGroup() {
-		return group;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public String getMsg() {
-		return msg;
-	}
-
-	public String getQq() {
-		return qq;
-	}
-
-	public Integer getSubType() {
-		return subType;
-	}
-
-	public Integer getType() {
-		return type;
-	}
-
-	public void setDiscuss(String discuss) {
-		this.discuss = discuss;
-	}
-
-	public void setGroup(String group) {
-		this.group = group;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
-
-	public void setQq(String qq) {
-		this.qq = qq;
-	}
-
-	public void setSubType(Integer subType) {
-		this.subType = subType;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	
 }

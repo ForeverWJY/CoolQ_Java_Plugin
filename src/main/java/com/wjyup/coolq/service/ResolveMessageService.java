@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
  * Created by WJY on 2017/8/1.
  */
 public abstract class ResolveMessageService {
-    public final Logger log = LogManager.getLogger(ResolveMessageService.class);
+    public final static Logger log = LogManager.getLogger(ResolveMessageService.class);
 
     /**
      * 处理消息，反射会默认调用此方法

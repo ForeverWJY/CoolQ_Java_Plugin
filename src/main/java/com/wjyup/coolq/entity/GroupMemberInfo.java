@@ -1,5 +1,8 @@
 package com.wjyup.coolq.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +11,8 @@ import java.io.Serializable;
  * @author WJY
  *
  */
+@Getter
+@Setter
 public class GroupMemberInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -38,77 +43,4 @@ public class GroupMemberInfo implements Serializable {
 		this.level = level;
 		this.endSayTime = endSayTime;
 	}
-
-	public String getEndSayTime() {
-		return endSayTime;
-	}
-
-	public String getEnterTime() {
-		return enterTime;
-	}
-
-	public String getLevel() {
-		return level;
-	}
-
-	public String getNickName() {
-		return nickName;
-	}
-
-	public Long getQq() {
-		return qq;
-	}
-
-	public Integer getQqAge() {
-		return qqAge;
-	}
-
-	public String getQunNickName() {
-		return qunNickName;
-	}
-
-	public String getSex() {
-		return sex;
-	}
-
-	public String getTab() {
-		return tab;
-	}
-
-	public void setEndSayTime(String endSayTime) {
-		this.endSayTime = endSayTime;
-	}
-
-	public void setEnterTime(String enterTime) {
-		this.enterTime = enterTime;
-	}
-
-	public void setLevel(String level) {
-		this.level = level;
-	}
-
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
-
-	public void setQq(Long qq) {
-		this.qq = qq;
-	}
-
-	public void setQqAge(Integer qqAge) {
-		this.qqAge = qqAge;
-	}
-
-	public void setQunNickName(String qunNickName) {
-		this.qunNickName = qunNickName;
-	}
-
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
-
-	public void setTab(String tab) {
-		this.tab = tab;
-	}
-
 }

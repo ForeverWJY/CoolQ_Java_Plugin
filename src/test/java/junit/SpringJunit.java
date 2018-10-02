@@ -1,7 +1,9 @@
 package junit;
 
 import com.wjyup.coolq.MainApp;
+import com.wjyup.coolq.entity.RequestData;
 import com.wjyup.coolq.service.impl.MenuService;
+import com.wjyup.coolq.service.impl.plugins.FundService;
 import com.wjyup.coolq.util.ConfigCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -24,19 +26,26 @@ import java.util.Properties;
 @ActiveProfiles(value="dev")
 public class SpringJunit {
 	private final Logger log = LogManager.getLogger("SpringJunit");
+	private RequestData requestData = new RequestData();
 	@Resource
-	private MenuService menuService;
+	private FundService fundService;
 	
 	@Before
 	public void inital(){
 		System.out.println("============inital============");
+		// 接收测试消息的QQ
+		requestData.setQQ(1066231345L);
+		requestData.setType(1);
+		requestData.setSubType(1);
 	}
 
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		// 华夏大中华混合(QDII)[002230]
-		String fundGP = menuService.getFundGP("002230");
-		log(fundGP);
+		requestData.setMsg("基金 002230");
+		fundService.doit(requestData);
+		requestData.setMsg("jj 002230");
+		fundService.doit(requestData);
 	}
 
 	public void log(Object o) {

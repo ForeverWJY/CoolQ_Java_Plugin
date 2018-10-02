@@ -54,6 +54,13 @@ public class ConfigCache implements InitializingBean {
 	@Value("${key}")
 	private String KEY;//key
 
+	/**
+	 * 处理包含CQ码的消息吗？
+	 */
+	@Value("${msg.cq}")
+	private String CQ_MSG;
+	private boolean DO_CQ_MSG;
+
 	@Value("${coolq.image.path}")
 	private String COOLQ_IMAGE_PATH;//CoolQ 图片文件夹
 	@Value("${manager.qq}")
@@ -103,6 +110,9 @@ public class ConfigCache implements InitializingBean {
 		//设置use_token
 		if (StringUtils.isNotBlank(getKEY())) {
 			setUSE_TOKEN(true);
+		}
+		if (CQ_MSG.equalsIgnoreCase("true")) {
+			DO_CQ_MSG = true;
 		}
 	}
 }

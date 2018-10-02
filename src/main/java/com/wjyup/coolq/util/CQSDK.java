@@ -17,11 +17,21 @@ import java.util.*;
 
 /**
  * CoolQ SDK
- * 
+ *
+ * HTTP状态码
+ * 200：表示成功调用了API，但不能保证调用结果是正确的
+ * 403：表示缺少API所需信息
+ * 404：表示调用了不存在的API
+ * 405：表示使用了接口不支持的协议，如GET，HEAD
+ * 406：表示提交的数据非支持的数据格式，如XML
+ *
+ * 如果使用了 数据校验 功能，在出错的情况下会返回以下状态码
+ * 401：表示缺少校验参数，或传递的参数有误
+ * 408：表示该请求超过有效时间
+ *
  * @author WJY
  */
 public class CQSDK {
-
 	private static Logger log = LogManager.getLogger("CQSDK");
 
 	/////////////////////// 静态API/////////////////////////
@@ -169,15 +179,15 @@ public class CQSDK {
 	 */
 	public static String sendShare(String url, String title, String content, String picUrl) {
 		if (StringUtils.isNotBlank(url)) {
-			StringBuffer ss = new StringBuffer("[CQ:share,url=" + url);
+			StringBuilder ss = new StringBuilder("[CQ:share,url=").append(url);
 			if (StringUtils.isNotBlank(title)) {
-				ss.append(",title=" + title);
+				ss.append(",title=").append(title);
 			}
 			if (StringUtils.isNotBlank(content)) {
-				ss.append(",content=" + content);
+				ss.append(",content=").append(content);
 			}
 			if (StringUtils.isNotBlank(picUrl)) {
-				ss.append(",image=" + picUrl);
+				ss.append(",image=").append(picUrl);
 			}
 			ss.append("]");
 			return ss.toString();
@@ -196,8 +206,7 @@ public class CQSDK {
 	public static String sendPrivateMsg(String qq,String message) {
 		if(StringUtils.isNotBlank(qq) && StringUtils.isNotBlank(message)){
 			Data data = new Data(Long.parseLong(qq), message,"sendPrivateMsg");
-			String result = SendMessageUtil.sendSocketData(data.toJson());
-			return result;
+			return SendMessageUtil.sendSocketData(data.toJson());
 		}
 		return null;
 	}
@@ -844,10 +853,6 @@ public class CQSDK {
 	 * @return
 	 */
 	private static int booleanToInteger(boolean flag){
-		if(flag){
-			return 1;
-		}
-		return 0;
+		return flag ? 1:0;
 	}
-	
 }

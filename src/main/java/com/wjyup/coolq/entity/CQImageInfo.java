@@ -1,5 +1,8 @@
 package com.wjyup.coolq.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,6 +11,8 @@ import java.util.Date;
  * 
  * @author WJY
  */
+@Getter
+@Setter
 public class CQImageInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -31,53 +36,4 @@ public class CQImageInfo implements Serializable {
 		this.url = url;
 		this.addtime = addtime;
 	}
-
-	public String getMd5() {
-		return md5;
-	}
-
-	public void setMd5(String md5) {
-		this.md5 = md5;
-	}
-
-	public Integer getWidth() {
-		return width;
-	}
-
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
-	public Integer getHeight() {
-		return height;
-	}
-
-	public void setHeight(Integer height) {
-		this.height = height;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public Date getAddtime() {
-		return addtime;
-	}
-
-	public void setAddtime(Date addtime) {
-		this.addtime = addtime;
-	}
-
 }

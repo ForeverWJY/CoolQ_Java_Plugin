@@ -26,7 +26,7 @@ public class TempCache implements Serializable {
 			.expireAfterWrite(60, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, Object>() {
 				@Override
-				public Object load(String s) throws Exception {
+				public Object load(String s) {
 					return "";
 				}
 			});
