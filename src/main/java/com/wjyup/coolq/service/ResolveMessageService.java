@@ -13,17 +13,17 @@ public abstract class ResolveMessageService {
     public final static Logger log = LogManager.getLogger(ResolveMessageService.class);
 
     /**
-     * 处理消息，反射会默认调用此方法
+     *
      * @param data
      */
     public abstract void doit(RequestData data) throws Exception;
 
     /**
      * 用于主动回复消息
-     * @param data
-     * @param message
+     * @param data 收到的消息
+     * @param message 回复的消息
      */
-    public void reply(RequestData data, String message){
+    protected void reply(RequestData data, String message){
         switch (data.getType()) {
             //私聊消息
             case 1:

@@ -4,17 +4,17 @@
 2. 消息处理类需要继承抽象类`ResolveMessageService`，并加入`@Repository`注解，消息处理类存放在`com.wjyup.coolq.service.impl.plugins`包下，可以在`data.properties`中设置路径（配置`plugin.package.path=com.xxx`即可），通过扫描该包下的所有类，并调用doit方法，进行消息处理，以前是通过反射进行加载，现改为Spring容器初始化完毕之后加载插件类
 3. 需要MySQL数据库，详情看`application.properties`信息
 
-## 感谢HSTB大神的大力支持
-## 需先启用酷Q的插件，然后设置如下：
+## 感谢Hstb1230大神的大力支持
+## 需先启用酷Q的插件，然后配置插件端，然后配置Java Web端，详细设置如下：
 
-### 2.1.4版本插件端配置如下：
+###2.1.4版本插件端配置如下：
 - 接口地址：`http://127.0.0.1:8080/coolq`，数据结构：`json`
 - 动态交互-监听端口：`1970`
 - 数据处理，删除key输入框的值
 - 关闭设置界面并刷新配置
 - `data.properties`是配置文件，请结合`ConfigCache`和注释一起查看
 
-### Java Web端配置如下：
+### Java Web端配置(`data.properties`)如下：
 ```properties
 # 选择推送消息的方式：websocket http
 msg.send.type=http

@@ -80,7 +80,7 @@ public class FundService extends ResolveMessageService {
     private String getFundGP(String fundNum){
         try {
             if(fundNum == null) return null;
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             //查询基金的信息
             String fund = getFund(fundNum);
             if(fund != null){

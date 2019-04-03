@@ -18,12 +18,7 @@ public class WebUtil {
 	private static Logger log = LogManager.getLogger(WebUtil.class);
 	//okhttp mediatype
 	public static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-	private static ThreadLocal<OkHttpClient> okHttpClientThreadLocal = new ThreadLocal<OkHttpClient>(){
-		@Override
-		public OkHttpClient get() {
-			return new OkHttpClient();
-		}
-	};
+	private static ThreadLocal<OkHttpClient> okHttpClientThreadLocal = ThreadLocal.withInitial(OkHttpClient::new);
 
 
 	/**
@@ -71,7 +66,7 @@ public class WebUtil {
 	}
 
 	/**
-	 * okhttpclient 提交POST数据
+	 * okhttpclient 同步 提交POST数据
 	 * @param url 链接
 	 * @param json  JSON数据
 	 * @return String 请求结果
@@ -92,7 +87,7 @@ public class WebUtil {
 	}
 
 	/**
-	 * okhttpclient 发送get请求
+	 * okhttpclient 同步 发送get请求
 	 * @param url 网址
 	 * @throws Exception
 	 */
