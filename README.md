@@ -1,20 +1,73 @@
 # CoolQ_Java_Plugin
-## 设计
-1. 项目使用JDK8+SpringBoot+Mybatis，依赖PHP对接插件（cc.1sls.CtPe.cpk）做服务端，[插件论坛下载地址](https://cqp.cc/forum.php?mod=viewthread&tid=28532)
-2. 消息处理类需要继承抽象类`ResolveMessageService`，并加入`@Repository`注解，消息处理类存放在`com.wjyup.coolq.service.impl.plugins`包下，可以在`data.properties`中设置路径（配置`plugin.package.path=com.xxx`即可），通过扫描该包下的所有类，并调用doit方法，进行消息处理，以前是通过反射进行加载，现改为Spring容器初始化完毕之后加载插件类
-3. 需要MySQL数据库，详情看`application.properties`信息
-
 ## 感谢Hstb1230大神的大力支持
-## 需先启用酷Q的插件，然后配置插件端，然后配置Java Web端，详细设置如下：
+## 说明
+1. 项目使用JDK8+SpringBoot 2.0.1.RELEASE+Mybatis，依赖PHP对接插件（cc.1sls.CtPe.cpk）负责转发消息到Java端
+2. 需要SpringBoot基础，[SpringBoot官方教程](https://spring.io/projects/spring-boot)
+3. 自定义实现消息处理：消息处理类需要继承抽象类`om.wjyup.coolq.service.ResolveMessageService`，并加入`@Repository`注解，消息处理类存放在`com.wjyup.coolq.service.impl.plugins`包下，可以在`data.properties`中设置路径（配置`plugin.package.path=com.xxx`即可），通过扫描该包下的所有类，并调用doit方法，进行消息处理，Spring容器初始化完毕之后加载插件类
 
-###2.1.4版本插件端配置如下：
-- 接口地址：`http://127.0.0.1:8080/coolq`，数据结构：`json`
-- 动态交互-监听端口：`1970`
-- 数据处理，删除key输入框的值
-- 关闭设置界面并刷新配置
-- `data.properties`是配置文件，请结合`ConfigCache`和注释一起查看
+## 上手使用：
+### 1.启动MySQL服务，执行`${Java项目根目录}/sql/init.mysql.sql`，目的：创建`coolq`数据库和用户并分配权限
+### 2.把`org.inlinc.inhttp.cpk`插件放入`${CoolQ文件根目录}/app`文件夹下，启动CoolQ并登录QQ，然后启用插件
+### 3.HTTP API插件端配置：
+- 配置文件所在路径：`${CoolQ文件根目录}/app/org.inlinc.inhttp/${QQ号}/config.ini`
+- 以下是配置示例：
+```ini
+[use]
+mod=1 #提交方法，0-socket，1-http
+log=1 #使用插件自带日志，0-不使用，1-使用
+format=0 #数据格式，0-json，1-key=value
+window=1 #配置面板，0-初级配置面板，1-高级配置面板
+autoRestart=enable #在插件奔溃时使用自动重启功能，0-不使用，1-使用
 
-### Java Web端配置(`data.properties`)如下：
+[socket] #提交数据-socket
+ip= #服务端的ip
+port= #服务端的监听端口
+sendTime=0 #发送最长等待时间，0为无限等待
+receiveTime=0 #接收最长等待时间，0为无限等待
+sendCount=3 #发送最多尝试次数
+receiveCount=3 #接收最多尝试次数
+
+[http] #提交数据-http
+url=http://127.0.0.1:8888/coolq #服务端地址
+proxy= #代理地址，地址格式：127.0.0.1:8888
+timeOut=30 #请求超时时间，单位：秒
+headers= #请求协议头，如需换行请用 \r\n
+cookies= #请求Cookies，如需换行请用 \r\n
+
+[rule] #提交规则
+headerIs= #提交规则-开头为，每个规则以base64编码保存，用"|"分隔，如果不会操作，请勿乱动
+haveThis= #提交规则-内容包含，每个规则以base64编码保存，用"|"分隔，如果不会操作，请勿乱动
+regularIs= #提交规则-符合正则表达式，每个规则以base64编码保存，用"|"分隔，如果不会操作，请勿乱动
+
+[httpSocket] #动态交互
+ipList=0.0.0.0, #允许连接的ip列表
+port=1970 #监听端口
+headers= #自定义头部，如需换行请用 \r\n
+dataForm=0 #0
+workMode=0 #0
+enableEventManage=true #真
+eventManage=enable
+
+[timeTask] #定时任务
+frequency= #请求频率，支持s/min/h格式时间，设置此项表示使用定时任务功能
+timeOut=30 #请求超时时间，单位：秒
+proxy= #代理地址，地址格式：127.0.0.1:8888
+url= #请求地址，如果使用，不能为空
+headers= #请求协议头，如需换行请用 \r\n
+cookies= #请求Cookies，如需换行请用 \r\n
+
+[data] #数据处理
+timeOut=30 #数据有效期
+key=123 #校验所需key，设置此项表示使用校验数据
+[log]
+enable=true #真
+writeFile=true #真
+useSelf=true
+[update]
+dev=false #假
+```
+
+### 4.Java Web端配置(`data.properties`)：
 ```properties
 # 选择推送消息的方式：websocket http
 msg.send.type=http
@@ -35,15 +88,14 @@ manager.qq=1066231345
 # 插件类(处理消息的类)所在的包
 plugin.package.path=com.wjyup.coolq.service.impl.plugins
 ```
-  
+### 5.启动Java项目，给机器人发消息看IDE的日志（日志默认是DEBUG级别）
 
+## 开发时IDE需要安装的插件
+- [lombok](https://projectlombok.org/)
 
-### 开发时需要安装的插件
-1. `lombok`
-
-## 欢迎加入QQ讨论群：553601318
+## 有问题？欢迎加入QQ讨论群：`553601318`
 
 ## 链接
-[插件地址](https://github.com/Hstb1230/CtPe)
-
-[Doc帮助文档](https://www.kancloud.cn/zerolib/http-to-cq/389312)
+- [插件论坛下载地址](https://cqp.cc/forum.php?mod=viewthread&tid=28532)
+- [插件地址](https://github.com/Hstb1230/CtPe)
+- [Doc帮助文档](https://www.kancloud.cn/zerolib/http-to-cq/389312)
