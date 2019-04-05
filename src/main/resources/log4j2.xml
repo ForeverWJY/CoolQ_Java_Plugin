@@ -33,18 +33,10 @@
 			<!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
 			<DefaultRolloverStrategy max="50"/>
 		</RollingRandomAccessFile>
-
-		<Syslog name="RFC5424" format="RFC5424" host="localhost" port="8080"
-				protocol="TCP" appName="MyApp" mdcId="mdc" includeMDC="true"
-				facility="LOCAL0" enterpriseNumber="18060" newLine="true"
-				messageId="Audit" id="App"/>
 	</Appenders>
 	<Loggers>
 		<Logger name="coolq-java" level="DEBUG" additivity="true">
 			<AppenderRef ref="TimFile" />
-		</Logger>
-		<Logger name="com.mycorp" level="debug">
-			<AppenderRef ref="RFC5424"/>
 		</Logger>
 		<Root level="debug">
 			<AppenderRef ref="Console" />
