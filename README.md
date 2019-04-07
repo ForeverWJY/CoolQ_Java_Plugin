@@ -3,7 +3,7 @@
 ## 说明
 1. 项目使用JDK8+SpringBoot 2.0.1.RELEASE+Mybatis，依赖PHP对接插件（cc.1sls.CtPe.cpk）负责转发消息到Java端
 2. 需要SpringBoot基础，[SpringBoot官方教程](https://spring.io/projects/spring-boot)
-3. 自定义实现消息处理：消息处理类需要继承抽象类`om.wjyup.coolq.service.ResolveMessageService`，并加入`@Repository`注解，消息处理类存放在`com.wjyup.coolq.service.impl.plugins`包下，可以在`data.properties`中设置路径（配置`plugin.package.path=com.xxx`即可），通过扫描该包下的所有类，并调用doit方法，进行消息处理，Spring容器初始化完毕之后加载插件类
+3. 自定义实现消息处理：参考Demo`com.wjyup.coolq.service.plugins.WeatherService`，使用的是发事件(Guava EventBus)的方式
 
 ## 上手使用：
 ### 1.启动MySQL服务，执行`${Java项目根目录}/sql/init.mysql.sql`，目的：创建`coolq`数据库和用户并分配权限
@@ -85,8 +85,6 @@ msg.cq=false
 coolq.image.path=C:\\Downloads\\\u9177Q\\data\\image
 # 管理员QQ，英文逗号分隔
 manager.qq=1066231345
-# 插件类(处理消息的类)所在的包
-plugin.package.path=com.wjyup.coolq.service.impl.plugins
 ```
 ### 5.启动Java项目，给机器人发消息看IDE的日志（日志默认是DEBUG级别）
 

@@ -13,12 +13,6 @@ public abstract class ResolveMessageService {
     public final static Logger log = LogManager.getLogger(ResolveMessageService.class);
 
     /**
-     *
-     * @param data
-     */
-    public abstract void doit(RequestData data) throws Exception;
-
-    /**
      * 用于主动回复消息
      * @param data 收到的消息
      * @param message 回复的消息

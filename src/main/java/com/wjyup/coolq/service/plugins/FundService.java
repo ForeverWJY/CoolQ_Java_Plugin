@@ -1,13 +1,19 @@
-package com.wjyup.coolq.service.impl.plugins;
+package com.wjyup.coolq.service.plugins;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.eventbus.Subscribe;
 import com.wjyup.coolq.entity.RequestData;
+import com.wjyup.coolq.event.GroupMsgEvent;
+import com.wjyup.coolq.event.PrivateMsgEvent;
+import com.wjyup.coolq.eventbus.XEventBus;
 import com.wjyup.coolq.service.ResolveMessageService;
 import com.wjyup.coolq.util.LocalCache;
 import com.wjyup.coolq.util.WebUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
@@ -18,9 +24,22 @@ import java.util.Arrays;
  * 基金Service
  */
 @Component
-public class FundService extends ResolveMessageService {
-    @Override
-    public void doit(RequestData data) throws Exception {
+public class FundService extends ResolveMessageService implements InitializingBean {
+    @Autowired
+    private XEventBus eventBus;
+
+    @Subscribe
+    public void doit(PrivateMsgEvent event) throws Exception {
+        doit(event.getRequestData());
+    }
+
+    @Subscribe
+    public void doit(GroupMsgEvent event) throws Exception {
+        doit(event.getRequestData());
+    }
+
+
+    private void doit(RequestData data) throws Exception {
         String key = data.getMsg();
         //基金
         if((key.startsWith("基金") || key.startsWith("jj")) && key.length() <= 10){
@@ -166,5 +185,10 @@ public class FundService extends ResolveMessageService {
             return sb.toString();
         }
         return null;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        eventBus.register(this);
     }
 }

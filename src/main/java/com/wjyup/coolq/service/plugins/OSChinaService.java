@@ -1,11 +1,15 @@
-package com.wjyup.coolq.service.impl.plugins;
+package com.wjyup.coolq.service.plugins;
 
+import com.google.common.eventbus.Subscribe;
 import com.wjyup.coolq.entity.RequestData;
+import com.wjyup.coolq.event.GroupMsgEvent;
+import com.wjyup.coolq.event.PrivateMsgEvent;
+import com.wjyup.coolq.eventbus.XEventBus;
 import com.wjyup.coolq.service.ResolveMessageService;
-import com.wjyup.coolq.util.ConfigCache;
 import com.wjyup.coolq.util.LocalCache;
 import com.wjyup.coolq.util.WebUtil;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import us.codecraft.xsoup.Xsoup;
@@ -14,15 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class OSChinaService extends ResolveMessageService {
+public class OSChinaService extends ResolveMessageService implements InitializingBean {
     @Autowired
-    private ConfigCache configCache;
+    private XEventBus eventBus;
 
     private final String oschinaNews = "oschina_news";
     private final String oschinaSoft = "oschina_soft";
 
-    @Override
-    public void doit(RequestData data) throws Exception {
+    @Subscribe
+    public void doit(PrivateMsgEvent event) {
+        doit(event.getRequestData());
+    }
+
+    @Subscribe
+    private void doit(GroupMsgEvent event) {
+        doit(event.getRequestData());
+    }
+
+    private void doit(RequestData data) {
         String msg = data.getMsg();
         if("oschina".equals(msg)){
             List<String> cache = (List<String>) LocalCache.getCache(oschinaNews);
@@ -62,5 +75,10 @@ public class OSChinaService extends ResolveMessageService {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        eventBus.register(this);
     }
 }

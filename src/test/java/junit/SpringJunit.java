@@ -2,10 +2,6 @@ package junit;
 
 import com.wjyup.coolq.MainApp;
 import com.wjyup.coolq.entity.RequestData;
-import com.wjyup.coolq.service.impl.MenuService;
-import com.wjyup.coolq.service.impl.plugins.FundService;
-import com.wjyup.coolq.util.ConfigCache;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -15,11 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Properties;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {MainApp.class})
 //相当于  --spring.profiles.active=dev
@@ -27,8 +18,8 @@ import java.util.Properties;
 public class SpringJunit {
 	private final Logger log = LogManager.getLogger("SpringJunit");
 	private RequestData requestData = new RequestData();
-	@Resource
-	private FundService fundService;
+//	@Resource
+//	private FundService fundService;
 	
 	@Before
 	public void inital(){
@@ -43,9 +34,9 @@ public class SpringJunit {
 	public void test() throws Exception {
 		// 华夏大中华混合(QDII)[002230]
 		requestData.setMsg("基金 002230");
-		fundService.doit(requestData);
+//		fundService.doit(requestData);
 		requestData.setMsg("jj 002230");
-		fundService.doit(requestData);
+//		fundService.doit(requestData);
 	}
 
 	public void log(Object o) {

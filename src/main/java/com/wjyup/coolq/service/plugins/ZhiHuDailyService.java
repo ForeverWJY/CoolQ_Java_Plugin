@@ -1,11 +1,17 @@
-package com.wjyup.coolq.service.impl.plugins;
+package com.wjyup.coolq.service.plugins;
 
+import com.google.common.eventbus.Subscribe;
 import com.wjyup.coolq.entity.RequestData;
+import com.wjyup.coolq.event.GroupMsgEvent;
+import com.wjyup.coolq.event.PrivateMsgEvent;
+import com.wjyup.coolq.eventbus.XEventBus;
 import com.wjyup.coolq.service.ResolveMessageService;
 import com.wjyup.coolq.util.LocalCache;
 import com.wjyup.coolq.util.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import us.codecraft.xsoup.Xsoup;
 
@@ -15,10 +21,23 @@ import java.util.List;
  * 知乎日报
  */
 @Component
-public class ZhiHuDailyService extends ResolveMessageService {
+public class ZhiHuDailyService extends ResolveMessageService implements InitializingBean {
+    @Autowired
+    private XEventBus eventBus;
+
     private final String KEY = "zhihu_daily";
-    @Override
-    public void doit(RequestData data) throws Exception {
+
+    @Subscribe
+    public void doit(PrivateMsgEvent event) {
+        doit(event.getRequestData());
+    }
+
+    @Subscribe
+    public void doit(GroupMsgEvent event) {
+        doit(event.getRequestData());
+    }
+
+    private void doit(RequestData data) {
         String msg = data.getMsg();
         if (msg.equalsIgnoreCase("zhihu")) {
             String zhihu = (String) LocalCache.getCache(KEY);
@@ -58,5 +77,10 @@ public class ZhiHuDailyService extends ResolveMessageService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        eventBus.register(this);
     }
 }

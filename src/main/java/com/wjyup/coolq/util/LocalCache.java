@@ -14,12 +14,7 @@ public class LocalCache {
     private static LoadingCache<String, Object> cache = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .expireAfterAccess(60L, TimeUnit.MINUTES)
-            .build(new CacheLoader<String, Object>() {
-                @Override
-                public Object load(String key) throws Exception {
-                    return key;
-                }
-            });
+            .build(CacheLoader.from(key -> key));
 
     public static void addCache(String name, Object value) {
         cache.put(name, value);

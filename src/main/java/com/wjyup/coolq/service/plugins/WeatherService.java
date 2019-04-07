@@ -1,13 +1,19 @@
-package com.wjyup.coolq.service.impl.plugins;
+package com.wjyup.coolq.service.plugins;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.eventbus.Subscribe;
 import com.wjyup.coolq.entity.RequestData;
+import com.wjyup.coolq.event.GroupMsgEvent;
+import com.wjyup.coolq.event.PrivateMsgEvent;
+import com.wjyup.coolq.eventbus.XEventBus;
 import com.wjyup.coolq.service.ResolveMessageService;
 import com.wjyup.coolq.util.LocalCache;
 import com.wjyup.coolq.util.WebUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
@@ -16,9 +22,21 @@ import java.net.URLEncoder;
  * 查询天气
  */
 @Component
-public class WeatherService extends ResolveMessageService {
-    @Override
-    public void doit(RequestData data) throws Exception {
+public class WeatherService extends ResolveMessageService implements InitializingBean {
+    @Autowired
+    private XEventBus eventBus;
+
+    @Subscribe
+    public void doit(PrivateMsgEvent event) {
+        doit(event.getRequestData());
+    }
+
+    @Subscribe
+    public void doit(GroupMsgEvent event) {
+        doit(event.getRequestData());
+    }
+
+    private void doit(RequestData data) {
         String key = data.getMsg();
         if (key.startsWith("天气") && key.length() < 10) {
             String cityName = key.replace("天气", "").replace(" ", "").trim();
@@ -73,5 +91,10 @@ public class WeatherService extends ResolveMessageService {
             log.error(e.getMessage(), e);
             return "没有找到["+name+"]的天气信息！";
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        eventBus.register(this);
     }
 }

@@ -2,10 +2,9 @@ package com.wjyup.coolq.util;
 
 import com.wjyup.coolq.entity.GroupApplication;
 import com.wjyup.coolq.entity.RequestData;
-import com.wjyup.coolq.service.IGroupService;
-import com.wjyup.coolq.service.IMenuService;
-import com.wjyup.coolq.service.ISettingListService;
-import com.wjyup.coolq.service.impl.MenuService;
+import com.wjyup.coolq.event.GroupMsgEvent;
+import com.wjyup.coolq.event.PrivateMsgEvent;
+import com.wjyup.coolq.eventbus.XEventBus;
 import com.wjyup.coolq.vo.SettingVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,11 +17,9 @@ import org.apache.logging.log4j.Logger;
 public class MessageHandle implements Runnable{
 	private final Logger log = LogManager.getLogger(MessageHandle.class);
 	
-	private IMenuService menuService = null;
-	private ISettingListService settingListService = null;
-	private IGroupService groupService = null;
-	
 	private RequestData data;
+
+	private XEventBus eventBus;
 	
 	public MessageHandle() {
 	}
@@ -31,9 +28,7 @@ public class MessageHandle implements Runnable{
 		super();
 		this.data = requestData;
 		//使用Spring工具类手动注入
-		menuService = SpringContext.getBean(MenuService.class);
-//		settingListService = SpringContext.getBean("settingListService");
-//		groupService = SpringContext.getBean("groupService");
+		eventBus = SpringContext.getBean(XEventBus.class);
 	}
 
 	@Override
@@ -42,6 +37,7 @@ public class MessageHandle implements Runnable{
 		switch (data.getType()) {
 		//私聊消息
 		case 1:
+			eventBus.post(new PrivateMsgEvent(data));
 			if(data.getSubType() == 11){//来自好友
 			    
 			}else if(data.getSubType() == 1){//来自在线状态 私聊
@@ -51,11 +47,10 @@ public class MessageHandle implements Runnable{
 			}else if(data.getSubType() == 3){//来自讨论组 私聊
 			    
 			}
-			resolveMessage();
 			break;
 		//群消息
 		case 2:
-			
+			eventBus.post(new GroupMsgEvent(data));
 			if(data.getSubType() == 1){//普通消息
 
 			}else if(data.getSubType() == 2){//匿名消息
@@ -63,11 +58,9 @@ public class MessageHandle implements Runnable{
 			}else if(data.getSubType() == 3){//系统消息
 			    
 			}
-			resolveMessage();
 		    break;
 		//讨论组信息
 		case 4:
-			resolveMessage();
 		    break;
 		//上传群文件
 		case 11:
@@ -80,7 +73,6 @@ public class MessageHandle implements Runnable{
 			}else if(data.getSubType() == 2){//被设置管理员
 			    
 			}
-			resolveMessage();
 		    break;
 		//群成员减少
 		case 102:
@@ -91,8 +83,7 @@ public class MessageHandle implements Runnable{
 			}else if(data.getSubType() == 3){//自己(即登录号)被踢
 			    
 			}
-			resolveMessage();
-			vo = settingListService.getSetting("group_leave");
+//			vo = settingListService.getSetting("group_leave");
 			if(vo != null && StringUtils.isNotBlank(vo.getValue())){
 				//获取群成员的昵称
 				String nickName = CQSDK.queryNickNameByQQ(data.getBeingOperateQQ().toString());
@@ -112,11 +103,10 @@ public class MessageHandle implements Runnable{
 			}else if(data.getSubType() == 2){//管理员邀请
 			    
 			}
-			resolveMessage();
 			if(data != null && data.getGroup() != null ){
-				vo = settingListService.getSetting("group_welcome"+data.getGroup());
+//				vo = settingListService.getSetting("group_welcome"+data.getGroup());
 			}else{
-				vo = settingListService.getSetting("group_welcome");
+//				vo = settingListService.getSetting("group_welcome");
 			}
 			if(vo != null && StringUtils.isNotBlank(vo.getValue())){
 				String result = String.format(vo.getValue(), CQSDK.sendAt(data.getBeingOperateQQ().toString()));
@@ -140,30 +130,10 @@ public class MessageHandle implements Runnable{
 		    }
 		    //记录
 		    GroupApplication application = new GroupApplication(null, data.getType(), data.getSubType(), data.getQQ().toString(), data.getGroup().toString(), data.getDiscuss().toString(), data.getMsg());
-		    groupService.add(application);
+//		    groupService.add(application);
 		    break;
 		default:
 			break;
-		}
-	}
-
-	private void resolveMessage() {
-		// 查询是否有缓存
-		if(!ConfigCache.MSG_PLUGIN_LIST.isEmpty()){
-			ConfigCache.MSG_PLUGIN_LIST.forEach(v -> {
-				try{
-					if (SpringContext.getConfigCache().isDO_CQ_MSG()) {
-						v.doit(data);
-					} else {
-						//不处理包含CQ码的请求
-						if (!data.getMsg().contains("CQ:")) {
-							v.doit(data);
-						}
-					}
-				}catch (Exception e){
-					log.error(e.getMessage(),e);
-				}
-			});
 		}
 	}
 }
