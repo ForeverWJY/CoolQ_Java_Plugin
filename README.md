@@ -95,5 +95,5 @@ manager.qq=1066231345
 
 ## 链接
 - [插件论坛下载地址](https://cqp.cc/forum.php?mod=viewthread&tid=28532)
-- [插件地址](https://github.com/Hstb1230/CtPe)
-- [Doc帮助文档](https://www.kancloud.cn/zerolib/http-to-cq/389312)
+- [插件Github地址](https://github.com/Hstb1230/http-to-cq)
+- [插件帮助文档](https://github.com/Hstb1230/http-to-cq/wiki)
